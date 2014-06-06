@@ -3,11 +3,11 @@ codeigniter-matches-cli
 
 Codeigniter Matches is a cli script that allows you to write controllers, models and views faster.
 
-#USAGE
+#Usage
 
-#HISTORY
+#History
 This project started from a great idea posted by @veedeoo [veedeoo@gmail.com] on http://www.daniweb.com/web-development/php/code/477847/codeigniter-cli-trainer-script-creates-simple-application
-#COPYRIGHT
+#Copyright
 
 Copyright (C) 2014 @avenirer [avenir.ro@gmail.com]
 Everyone is permitted to copy and distribute verbatim or modified copies of this license document, and changing it is allowed as long as the name is changed.
