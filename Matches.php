@@ -96,7 +96,7 @@ class Matches extends CI_Controller {
 	* create application's controller file, model file, and view file
 	* @migration, this you can extend
 	*/
-	public function create_app($app,$migration=false)
+	public function create_app($app)
 	{
 		if(file_exists('application/controllers/'.$this->_filename($app).'.php') OR (class_exists(''.$app.'')) OR (class_exists(''.$app.'_model')))
 		{
