@@ -49,12 +49,12 @@
 <li>
 <p>Go to your config.php file inside the application/config and make sure the following line looks like below:</p>
 
-<p>$config['uri_protocol'] = 'AUTO';</p>
+<code>$config['uri_protocol'] = 'AUTO';</code>
 </li>
 <li>
 <p>After that line, add the following line</p>
 
-<p>$config['uri_protocol'] = isset($_SERVER['REQUEST_URI']) ? 'PATH_INFO' : 'CLI';  </p>
+<code>$config['uri_protocol'] = isset($_SERVER['REQUEST_URI']) ? 'PATH_INFO' : 'CLI';  </code>
 </li>
 <li><p>Save the file...</p></li>
 <li><p>Put Matches.php inside the controllers directory.</p></li>
@@ -69,17 +69,17 @@
 
 <p>You can start using the Matches by writing:</p>
 
-<p>php index.php matches [COMMAND]</p>
+<code>php index.php matches <strong>[COMMAND]</strong></code>
 
-<p>...where [COMMAND] can be:</p>
+<p>...where <strong>[COMMAND]</strong> can be:</p>
 
-<p><strong>create_app name_of_app</strong> - creates a MVC stack (controller, model, view) having name_of_app as names.</p>
+<p><code>create_app <em>name_of_app</em></code> - creates a MVC stack (controller, model, view) having name_of_app as names.</p>
 
-<p><strong>create_controller name_of_controller</strong> - creates a controller having name_of_controller as name.</p>
+<p><code>create_controller <em>name_of_controller</em></code> - creates a controller having name_of_controller as name.</p>
 
-<p><strong>create_model name_of_model</strong> - creates a model having name_of_model as name.</p>
+<p><code>create_model <em>name_of_model</em></code> - creates a model having name_of_model as name.</p>
 
-<p><strong>create_view name_of_view</strong> - creates a controller having name_of_view as file name.</p>
+<p><code>create_view <em>name_of_view</em></code> - creates a controller having name_of_view as file name.</p>
 
 <h1>
 <a name="history" class="anchor" href="#history"><span class="octicon octicon-link"></span></a>History</h1>
