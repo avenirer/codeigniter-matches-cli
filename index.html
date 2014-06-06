@@ -38,45 +38,36 @@
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
 
 <ol>
-<li><p>To verify if you have php cli installed, type into terminal/command prompt.</p>
-<code>php -v</code>
-</li>
-<li><p>If you receive the php version number, then you are good to go.</p></li>
+<li>To verify if you have php cli installed, type into terminal/command prompt.<br /><code>php -v</code></li>
 
-<li>
-<p>Go to your config.php file inside the application/config and make sure the following line looks like below:</p>
+<li>If you receive the php version number, then you are good to go.</li>
 
+<li>Go to your config.php file inside the application/config and make sure the following line looks like below:<br />
 <code>$config['uri_protocol'] = 'AUTO';</code>
 </li>
-<li>
-<p>After that line, add the following line</p>
-
-<code>$config['uri_protocol'] = isset($_SERVER['REQUEST_URI']) ? 'PATH_INFO' : 'CLI';  </code>
+<li>After that line, add:<br />
+<code>$config['uri_protocol'] = isset($_SERVER['REQUEST_URI']) ? 'PATH_INFO' : 'CLI';</code>
 </li>
-<li><p>Save the file...</p></li>
-<li><p>Put Matches.php inside the controllers directory.</p></li>
-<li>
-<p>From terminal or command prompt go to the application's index.php and type:</p>
-
+<li>Save the file...</li>
+<li>Put Matches.php (or matches.php if you have a lesser than v.3 Codeigniter) inside the controllers directory.</li>
+<li>From terminal or command prompt go to the application's index.php and type:<br />
 <code>php index.php matches</code>
 </li>
-<li><p>If everything went well, you should be greeted by the Matches.</p></li>
-</ol><h2>
-<a name="commands" class="anchor" href="#commands"><span class="octicon octicon-link"></span></a>Commands</h2>
+<li>If everything went well, you should be greeted by Matches.</li>
+</ol>
+<h2><a name="commands" class="anchor" href="#commands"><span class="octicon octicon-link"></span></a>Commands</h2>
 
-<p>You can start using the Matches by writing:</p>
-
-<code>php index.php matches <strong>[COMMAND]</strong></code>
+<p>You can start using Matches by writing:<br />
+<code>php index.php matches <strong>[COMMAND]</strong></code></p>
 
 <p>...where <code>[COMMAND]</code> can be:</p>
 
-<p><code>create_app <em>name_of_app</em></code> - creates a MVC stack (controller, model, view) having name_of_app as names.</p>
-
-<p><code>create_controller <em>name_of_controller</em></code> - creates a controller having name_of_controller as name.</p>
-
-<p><code>create_model <em>name_of_model</em></code> - creates a model having name_of_model as name.</p>
-
-<p><code>create_view <em>name_of_view</em></code> - creates a controller having name_of_view as file name.</p>
+<ul>
+  
+  <li><code>create_app <strong>name_of_app</strong></code> - creates a MVC stack (controller, model, view) having name_of_app as names.</li>
+  <li><code>create_controller <em>name_of_controller</em></code> - creates a controller having name_of_controller as name.</li>
+  <li><code>create_model <em>name_of_model</em></code> - creates a model having name_of_model as name.</li>
+  <li><code>create_view <em>name_of_view</em></code> - creates a controller having name_of_view as file name.</li>
 
 <h1>
 <a name="history" class="anchor" href="#history"><span class="octicon octicon-link"></span></a>History</h1>
