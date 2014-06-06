@@ -181,6 +181,7 @@ footer {
   width:270px;
   float:left;
   position:fixed;
+  top:10px;
   bottom:50px;
 }
 
