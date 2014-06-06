@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Codeigniter Matches CLI by avenirer</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Codeigniter Matches CLI</h1>
+        <p>Codeigniter Matches is a cli script that allows you to write controllers, models and views faster.</p>
+
+        <p class="view"><a href="https://github.com/avenirer/codeigniter-matches-cli">View the Project on GitHub <small>avenirer/codeigniter-matches-cli</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/avenirer/codeigniter-matches-cli/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/avenirer/codeigniter-matches-cli/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/avenirer/codeigniter-matches-cli">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="codeigniter-matches-cli" class="anchor" href="#codeigniter-matches-cli"><span class="octicon octicon-link"></span></a>Codeigniter Matches CLI</h1>
+
+<p>Codeigniter Matches is a cli script that allows you to write controllers, models and views faster.</p>
+
+<h1>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<ol>
+<li>
+<p>To verify if you have php cli installed, open your terminal command prompt, and then type.</p>
+
+<p>php -v</p>
+</li>
+</ol><p>If you will receive the php version number, then you are good to go.</p>
+
+<ol>
+<li>
+<p>Go to your config.php file inside the application/config and make sure the following line looks like below:</p>
+
+<p>$config['uri_protocol'] = 'AUTO';</p>
+</li>
+<li>
+<p>After that line, add the following line</p>
+
+<p>$config['uri_protocol'] = isset($_SERVER['REQUEST_URI']) ? 'PATH_INFO' : 'CLI';  </p>
+</li>
+<li><p>Save the file...</p></li>
+<li><p>Put Matches.php inside the controllers directory.</p></li>
+<li>
+<p>From terminal or command prompt go to the application's index.php and type:</p>
+
+<p>php index.php matches</p>
+</li>
+<li><p>If everything went well, you should be greeted by the Matches.</p></li>
+</ol><h2>
+<a name="commands" class="anchor" href="#commands"><span class="octicon octicon-link"></span></a>Commands</h2>
+
+<p>You can start using the Matches by writing:</p>
+
+<p>php index.php matches [COMMAND]</p>
+
+<p>...where [COMMAND] can be:</p>
+
+<p><strong>create_app name_of_app</strong> - creates a MVC stack (controller, model, view) having name_of_app as names.</p>
+
+<p><strong>create_controller name_of_controller</strong> - creates a controller having name_of_controller as name.</p>
+
+<p><strong>create_model name_of_model</strong> - creates a model having name_of_model as name.</p>
+
+<p><strong>create_view name_of_view</strong> - creates a controller having name_of_view as file name.</p>
+
+<h1>
+<a name="history" class="anchor" href="#history"><span class="octicon octicon-link"></span></a>History</h1>
+
+<p>This project started from a great idea posted by <a href="https://github.com/veedeoo" class="user-mention">@veedeoo</a> [<a href="mailto:veedeoo@gmail.com">veedeoo@gmail.com</a>] on <a href="http://www.daniweb.com/web-development/php/code/477847/codeigniter-cli-trainer-script-creates-simple-application">http://www.daniweb.com/web-development/php/code/477847/codeigniter-cli-trainer-script-creates-simple-application</a></p>
+
+<h1>
+<a name="copyright" class="anchor" href="#copyright"><span class="octicon octicon-link"></span></a>Copyright</h1>
+
+<p>Copyright (C) 2014 <a href="https://github.com/avenirer" class="user-mention">@avenirer</a> [<a href="mailto:avenir.ro@gmail.com">avenir.ro@gmail.com</a>]
+Everyone is permitted to copy and distribute verbatim or modified copies of this license document, and changing it is allowed as long as the name is changed.</p>
+
+<p>DON'T BE A DICK PUBLIC LICENSE TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION</p>
+
+<p>Do whatever you like with the original work, just don't be a dick.
+Being a dick includes - but is not limited to - the following instances:
+1a. Outright copyright infringement - Don't just copy this and change the name.
+1b. Selling the unmodified original with no work done what-so-ever, that's REALLY being a dick.
+1c. Modifying the original work to contain hidden harmful content. That would make you a PROPER dick.
+If you become rich through modifications, related works/services, or supporting the original work, share the love. Only a dick would make loads off this work and not buy the original works creator(s) a pint.
+Code is provided with no warranty. 
+Using somebody else's code and bitching when it goes wrong makes you a DONKEY dick. 
+Fix the problem yourself. A non-dick would submit the fix back.
+License info: <a href="http://www.dbad-license.org/">http://www.dbad-license.org/</a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/avenirer">avenirer</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
