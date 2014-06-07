@@ -5,45 +5,7 @@ Codeigniter Matches is a cli script that allows you to write controllers, models
 
 #Usage
 
-1. To verify if you have php cli installed, open your terminal command prompt, and then type.
-
-  php -v
-
-If you will receive the php version number, then you are good to go.
-
-2. Go to your config.php file inside the application/config and make sure the following line looks like below:
-
-  $config['uri_protocol'] = 'AUTO';
-
-3. After that line, add the following line
-
-  $config['uri_protocol'] = isset($_SERVER['REQUEST_URI']) ? 'PATH_INFO' : 'CLI';  
-
-4. Save the file...
-
-5. Put Matches.php inside the controllers directory, and matches_templates folder inside the views folder.
-
-6. From terminal or command prompt go to the application's index.php and type:
-
-  php index.php matches
-
-7. If everything went well, you should be greeted by the Matches.
-
-## Commands
-
-You can start using the Matches by writing:
-
-  php index.php matches [COMMAND]
-
-...where [COMMAND] can be:
-
-**create_app name_of_app** - creates a MVC stack (controller, model, view) having name_of_app as names.
-
-**create_controller name_of_controller** - creates a controller having name_of_controller as name.
-
-**create_model name_of_model** - creates a model having name_of_model as name.
-
-**create_view name_of_view** - creates a controller having name_of_view as file name.
+Visit http://avenirer.github.io/codeigniter-matches-cli/
 
 
 #History
