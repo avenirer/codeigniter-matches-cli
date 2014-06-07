@@ -21,7 +21,7 @@ If you will receive the php version number, then you are good to go.
 
 4. Save the file...
 
-5. Put Matches.php inside the controllers directory.
+5. Put Matches.php inside the controllers directory, and matches_templates folder inside the views folder.
 
 6. From terminal or command prompt go to the application's index.php and type:
 
