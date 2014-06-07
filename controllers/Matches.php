@@ -37,6 +37,7 @@ ini_set('memory_limit', '256M');
 class Matches extends CI_Controller {
 	private $_c_extends = 'CI';
 	private $_m_extends = 'CI';
+	private $_templates_loc = 'application/views/matches_templates/';
 	private $_tab = "\t";
 	private $_tab2 = "\t\t";
 	private $_tab3 = "\t\t\t";
@@ -45,9 +46,11 @@ class Matches extends CI_Controller {
 	private $_ret2 = "\n\n";
 	private $_rettab = "\n\t";
     private $_tabret= "\t\n";
+	private $_find_replace = array();
 	public function __construct()
 	{
 		parent::__construct();
+		
 		if (ENVIRONMENT === 'production')
 		{
 			echo "\n";
@@ -124,112 +127,20 @@ class Matches extends CI_Controller {
 		}
 		else
 		{
-			$f = '';
-			## must use single quotes when it is necessary
-			$f .='<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');
-
-class '.$class_name.' extends '.$this->_c_extends.'_Controller
-{
-	public function __construct()
-	{
-		parent::__construct();
-	}
-	
-	public function index()
-	{
-		$this->load->model(\''.strtolower($class_name).'_model\');
-		$data[\'content\'] = $this->'.strtolower($class_name).'_model->get_all();
-		$this->load->view(\''.strtolower($class_name).'_view\', $data);
-	}
-		
-	public function get($id)
-	{
-		$id = intval($id);
-		if($id!=0)
-		{
-			$this->load->model(\''.$class_name.'_model\');
-			$data[\'content\'] = $this->'.$class_name.'_model->get($id);
-			$this->load->view(\''.$class_name.'_view\', $data);
-		}
-		else
-		{
-			redirect(site_url(),\'refresh\');
-		}
-	}
-	
-	public function add()
-	{
-		$this->form_validation->set_rules(\'element\',\'Element label\',\'trim|required\');
-		if($this->form_validation->run()===FALSE)
-		{
-			$data[\'input_element\'] = array(\'name\'=>\'element\', \'id\'=>\'element\', \'value\'=>set_value(\'element\'));
-			$this->load->view(\''.strtolower($class_name).'_view\', $data);
-		}
-		else
-		{
-			$field = $this->input->post(\'element\');
-			$this->load->model(\''.strtolower($class_name).'_model\');
-			if($this->'.strtolower($class_name).'_model->add(array(\'field_name\'=>$field)))
+			if(file_exists($this->_templates_loc.'controller_template.txt'))
 			{
-				$this->load->view(\'success_page_view\');
+				$f = file_get_contents($this->_templates_loc.'controller_template.txt');
 			}
 			else
 			{
-				$this->load->view(\'error_page_view\');
+				echo $this->_ret.'Couldn\'t find Controller template.';
+				return FALSE;
 			}
-		}
-	}
-	
-	public function edit()
-	{
-		$this->form_validation->set_rules(\'element\',\'Element label\',\'trim|required\');
-		$this->form_validation->set_rules(\'id\',\'ID\',\'trim|is_natural_no_zero|required\');
-		if($this->form_validation->run()===FALSE)
-		{
-			if(!$this->input->post())
-			{
-				$id = intval($this->uri->segment($this->uri->total_segments()));
-			}
-			else
-			{
-				$id = set_value(\'id\');
-			}
-			$data[\'input_element\'] = array(\'name\'=>\'element\', \'id\'=>\'element\', \'value\'=>set_value(\'element\'));
-			$data[\'hidden\'] = array(\'id\'=>set_value(\'id\',$id));
-			$this->load->view(\''.strtolower($class_name).'_view\', $data);
-		}
-		else
-		{
-			$element = $this->input->post(\'element\');
-			$id = $this->input->post(\'id\');
-			$this->load->model(\''.strtolower($class_name).'_model\');
-			if($this->'.strtolower($class_name).'_model->update(array(\'element\'=>$element),array(\'id\'=>$id)))
-			{
-				$this->load->view(\'success_page_view\', $data);
-			}
-			else
-			{
-				$this->load->view(\'error_page_view\');
-			}
-		}
-	}
-	public function delete($id)
-	{
-		$id = intval($id);
-		if($id!=0)
-		{
-			$this->load->model(\''.strtolower($class_name).'_model\');
-			$data[\'content\'] = $this->'.strtolower($class_name).'_model->delete();
-			$this->load->view(\''.strtolower($class_name).'_view\', $data);
-		}
-		else
-		{
-			redirect(site_url(),\'refresh\');
-		}
-	}
-}
-/* End of file '.$file_name.' */
-/* Location: ./application/controllers/'.$file_name.'.php */';
+			$this->_find_replace['{{CONTROLLER}}'] = $class_name;
+			$this->_find_replace['{{CONTROLLER_FILE}}'] = $file_name;
+			$this->_find_replace['{{MV}}'] = strtolower($class_name);
+			$this->_find_replace['{{C_EXTENDS}}'] = $this->_c_extends;
+			$f = strtr($f,$this->_find_replace);
 			$writeThisFile = fopen('application/controllers/'.$file_name.'.php',"w");
 			if(fwrite($writeThisFile,$f))
 			{
@@ -258,32 +169,29 @@ class '.$class_name.' extends '.$this->_c_extends.'_Controller
 		}
 		else
 		{
-			$f = '';
-			## must use single quotes when it is necessary
-			$f .='<?php  if(!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');
-class '.$class_name.' extends '.$this->_m_extends.'_Model
-{
-	public function __construct()
-	{
-		parent::__construct();
-	}
-	
-	public function get_all()
-	{
-		return (\'This is your first application\');
-	}
-}
-/* End of file '.$file_name.' */
-/* Location: ./application/models/'.$file_name.'.php */';
+			if(file_exists($this->_templates_loc.'model_template.txt'))
+			{
+				$f = file_get_contents($this->_templates_loc.'model_template.txt');
+			}
+			else
+			{
+				echo $this->_ret.'Couldn\'t find Model template.';
+				return FALSE;
+			}
+			$this->_find_replace['{{MODEL}}'] = $class_name;
+			$this->_find_replace['{{MODEL_FILE}}'] = $file_name;
+			$this->_find_replace['{{M_EXTENDS}}'] = $this->_m_extends;
+			$f = strtr($f,$this->_find_replace);
 			$writeThisFile = fopen('application/models/'.$file_name.'.php',"w");
 			if(fwrite($writeThisFile,$f))
 			{
 				fclose($writeThisFile);
-				echo $this->_ret.'Model '.$class_name.' has been created. What now?';
+				echo $this->_ret.'Model '.$class_name.' has been created.';
+				return TRUE;
 			}
 			else
 			{
-				echo 'Couldn\'t write model.';
+				echo $this->_ret.'Couldn\'t write Model.';
 				return FALSE;
 			}
 		}
@@ -302,25 +210,28 @@ class '.$class_name.' extends '.$this->_m_extends.'_Model
 		}
 		else
 		{
-			$f ='<!DOCTYPE html>
-<html>
-	<head>
-		<title>'.$file_name.' view page</title>
-	</head>
-	<body>
-		<h1>This is my first application</h1>
-		<?php echo $content; ?>
-	</body>
-</html>';
+			if(file_exists($this->_templates_loc.'view_template.txt'))
+			{
+				$f = file_get_contents($this->_templates_loc.'view_template.txt');
+			}
+			else
+			{
+				echo $this->_ret.'Couldn\'t find View template.';
+				return FALSE;
+			}
+			$this->_find_replace['{{VIEW}}'] = $file_name;
+			$f = strtr($f,$this->_find_replace);
 			$writeThisFile = fopen('application/views/'.$file_name.'_view.php',"w");
 			if(fwrite($writeThisFile,$f))
 			{
 				fclose($writeThisFile);
-				echo $this->_ret.'View '.$file_name.'_view has been created. What now?';
+				echo $this->_ret.'View '.$class_name.' has been created.';
+				return TRUE;
 			}
 			else
 			{
-				echo 'Couldn\'t write view.'; 
+				echo $this->_ret.'Couldn\'t write View.';
+				return FALSE;
 			}
 		}
 	}
