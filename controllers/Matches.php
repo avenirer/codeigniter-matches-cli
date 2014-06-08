@@ -36,7 +36,8 @@ ini_set('memory_limit', '256M');
 /* here we go */
 class Matches extends CI_Controller {
 	private $_c_extends = 'CI';
-	private $_m_extends = 'CI';
+	private $_mo_extends = 'CI';
+	private $_mi_extends = 'CI';
 	private $_templates_loc = 'application/views/matches_templates/';
 	private $_tab = "\t";
 	private $_tab2 = "\t\t";
@@ -180,7 +181,7 @@ class Matches extends CI_Controller {
 			}
 			$this->_find_replace['{{MODEL}}'] = $class_name;
 			$this->_find_replace['{{MODEL_FILE}}'] = $file_name;
-			$this->_find_replace['{{M_EXTENDS}}'] = $this->_m_extends;
+			$this->_find_replace['{{MO_EXTENDS}}'] = $this->_mo_extends;
 			$f = strtr($f,$this->_find_replace);
 			$writeThisFile = fopen('application/models/'.$file_name.'.php',"w");
 			if(fwrite($writeThisFile,$f))
@@ -235,6 +236,90 @@ class Matches extends CI_Controller {
 			}
 		}
 	}
+
+	public function create_migration($action, $table = NULL)
+	{
+		$class_name = 'Migration_'.ucfirst($action);
+		$this->config->load('migration',TRUE);
+		$migration_path = $this->config->item('migration_path','migration');
+		if(!file_exists($migration_path))
+		{
+			if(mkdir($migration_path,0755))
+			{
+				echo $this->_ret.'Folder migrations created.';
+			}
+			else
+			{
+				echo $this->_ret.'Couldn\'t create folder migrations.';
+				return FALSE;
+			}
+		}
+		$migration_type = $this->config->item('migration_type','migration');
+		if(empty($migration_type))
+		{
+			$migration_type = 'sequential';
+		}
+		if($migration_type == 'timestamp')
+		{
+			$file_name = date('YmdHis').'_'.strtolower($action);
+		}
+		else
+		{
+			$latest_migration = 0;
+			foreach (glob($migration_path.'*.php') as $migration)
+			{
+				$pattern = '/[0-9]{3}/';
+				if(preg_match($pattern, $migration,$matches))
+				{
+					$migration_version = intval($matches[0]);
+					$latest_migration = ($migration_version>$latest_version) ? $migration_version : $latest_version;
+				}
+			}
+			$latest_migration = (string)++$latest_migration;
+			$zeroes = 3 - strlen($latest_migration);
+			$file_name = str_repeat('0', $zeroes).$latest_migration.'_'.strtolower($action);
+		}
+		if(file_exists($migration_path.$file_name) OR (class_exists($class_name)))
+		{
+			echo $this->_ret.$class_name.' Migration already exists.';
+			return FALSE;
+		}
+		else
+		{
+			if(file_exists($this->_templates_loc.'migration_template.txt'))
+			{
+				$f = file_get_contents($this->_templates_loc.'migration_template.txt');
+			}
+			else
+			{
+				echo $this->_ret.'Couldn\'t find Migration template.';
+				return FALSE;
+			}
+			$this->_find_replace['{{MIGRATION}}'] = $class_name;
+			$this->_find_replace['{{MIGRATION_FILE}}'] = $file_name;
+			$this->_find_replace['{{MIGRATION_PATH}}'] = $migration_path;
+			$this->_find_replace['{{MI_EXTENDS}}'] = $this->_mi_extends;
+			if(empty($table))
+			{
+				$table = $action;
+			}
+			$this->_find_replace['{{TABLE}}'] = $table;
+			$f = strtr($f,$this->_find_replace);
+			$writeThisFile = fopen($migration_path.$file_name.'.php',"w");
+			if(fwrite($writeThisFile,$f))
+			{
+				fclose($writeThisFile);
+				echo $this->_ret.'Migration '.$class_name.' has been created.';
+				return TRUE;
+			}
+			else
+			{
+				echo $this->_ret.'Couldn\'t write Migration.';
+				return FALSE;
+			}
+		}
+	}
+
 	private function _filename($str)
 	{
 		$file_name = strtolower($str);
@@ -244,4 +329,6 @@ class Matches extends CI_Controller {
 		}
 		return $file_name;
 	}
+	
+	
 }
