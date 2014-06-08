@@ -1,7 +1,7 @@
 Codeigniter Matches CLI
 ======================
 
-Codeigniter Matches is a cli script that allows you to write controllers, models and views faster.
+Codeigniter Matches is a PHP CLI script that allows you to write controllers, models and views faster.
 
 #Usage
 
