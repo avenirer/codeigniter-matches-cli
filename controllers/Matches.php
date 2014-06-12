@@ -276,7 +276,7 @@ class Matches extends CI_Controller {
 				}
 			}
 			$latest_migration = (string)++$latest_migration;
-			$file_name = str_pad($latest_migration, 3, '0', STR_PAD_LEFT)'_'.strtolower($action);
+			$file_name = str_pad($latest_migration, 3, '0', STR_PAD_LEFT).'_'.strtolower($action);
 		}
 		if(file_exists($migration_path.$file_name) OR (class_exists($class_name)))
 		{
