@@ -103,16 +103,23 @@ class Matches extends CI_Controller {
 	*/
 	public function create_app($app)
 	{
-		if(file_exists('application/controllers/'.$this->_filename($app).'.php') OR (class_exists(''.$app.'')) OR (class_exists(''.$app.'_model')))
-		{
-			echo $app.' Controller or Model already exists in the application/controllers directory.';
+		if(isset($app))
+		{	
+			if(file_exists('application/controllers/'.$this->_filename($app).'.php') OR (class_exists(''.$app.'')) OR (class_exists(''.$app.'_model')))
+			{
+				echo $app.' Controller or Model already exists in the application/controllers directory.';
+			}
+			else
+			{
+				$this->create_controller($app);
+				$this->create_model($app);
+				$this->create_view($app);
+				
+			}
 		}
 		else
 		{
-			$this->create_controller($app);
-			$this->create_model($app);
-			$this->create_view($app);
-			
+			echo $this->_ret.'You need to provide a name for the app';
 		}
 	}
 	/*
@@ -121,38 +128,45 @@ class Matches extends CI_Controller {
 	*/
 	public function create_controller($controller)
 	{
-		$class_name = ucfirst($controller);
-		$file_name = $this->_filename($class_name);
-		if(file_exists('application/controllers/'.$file_name.'.php') OR (class_exists($class_name)))
+		if(isset($controller))
 		{
-			echo $this->_ret.$class_name.' Controller already exists in the application/controllers directory.';
+			$class_name = ucfirst($controller);
+			$file_name = $this->_filename($class_name);
+			if(file_exists('application/controllers/'.$file_name.'.php') OR (class_exists($class_name)))
+			{
+				echo $this->_ret.$class_name.' Controller already exists in the application/controllers directory.';
+			}
+			else
+			{
+				if(file_exists($this->_templates_loc.'controller_template.txt'))
+				{
+					$f = read_file($this->_templates_loc.'controller_template.txt');
+				}
+				else
+				{
+					echo $this->_ret.'Couldn\'t find Controller template.';
+					return FALSE;
+				}
+				$this->_find_replace['{{CONTROLLER}}'] = $class_name;
+				$this->_find_replace['{{CONTROLLER_FILE}}'] = $file_name;
+				$this->_find_replace['{{MV}}'] = strtolower($class_name);
+				$this->_find_replace['{{C_EXTENDS}}'] = $this->_c_extends;
+				$f = strtr($f,$this->_find_replace);
+				if(write_file('application/controllers/'.$file_name.'.php',$f))
+				{
+					echo $this->_ret.'Controller '.$class_name.' has been created.';
+					return TRUE;
+				}
+				else
+				{
+					echo $this->_ret.'Couldn\'t write Controller.';
+					return FALSE;
+				}
+			}
 		}
 		else
 		{
-			if(file_exists($this->_templates_loc.'controller_template.txt'))
-			{
-				$f = read_file($this->_templates_loc.'controller_template.txt');
-			}
-			else
-			{
-				echo $this->_ret.'Couldn\'t find Controller template.';
-				return FALSE;
-			}
-			$this->_find_replace['{{CONTROLLER}}'] = $class_name;
-			$this->_find_replace['{{CONTROLLER_FILE}}'] = $file_name;
-			$this->_find_replace['{{MV}}'] = strtolower($class_name);
-			$this->_find_replace['{{C_EXTENDS}}'] = $this->_c_extends;
-			$f = strtr($f,$this->_find_replace);
-			if(write_file('application/controllers/'.$file_name.'.php',$f))
-			{
-				echo $this->_ret.'Controller '.$class_name.' has been created.';
-				return TRUE;
-			}
-			else
-			{
-				echo $this->_ret.'Couldn\'t write Controller.';
-				return FALSE;
-			}
+			echo $this->_ret.'You need to provide a name for the controller.';
 		}
 	}
 	/*
@@ -161,37 +175,44 @@ class Matches extends CI_Controller {
 	*/
 	public function create_model($model)
 	{
-		$class_name = ucfirst($model).'_model';
-		$file_name = $this->_filename($class_name);
-		if(file_exists('application/models/'.$file_name.'.php') OR (class_exists($class_name)))
+		if(isset($model))
 		{
-			echo $this->_ret.$class_name.' Model already exists in the application/models directory.';
+			$class_name = ucfirst($model).'_model';
+			$file_name = $this->_filename($class_name);
+			if(file_exists('application/models/'.$file_name.'.php') OR (class_exists($class_name)))
+			{
+				echo $this->_ret.$class_name.' Model already exists in the application/models directory.';
+			}
+			else
+			{
+				if(file_exists($this->_templates_loc.'model_template.txt'))
+				{
+					$f = read_file($this->_templates_loc.'model_template.txt');
+				}
+				else
+				{
+					echo $this->_ret.'Couldn\'t find Model template.';
+					return FALSE;
+				}
+				$this->_find_replace['{{MODEL}}'] = $class_name;
+				$this->_find_replace['{{MODEL_FILE}}'] = $file_name;
+				$this->_find_replace['{{MO_EXTENDS}}'] = $this->_mo_extends;
+				$f = strtr($f,$this->_find_replace);
+				if(write_file('application/models/'.$file_name.'.php',$f))
+				{
+					echo $this->_ret.'Model '.$class_name.' has been created.';
+					return TRUE;
+				}
+				else
+				{
+					echo $this->_ret.'Couldn\'t write Model.';
+					return FALSE;
+				}
+			}
 		}
 		else
 		{
-			if(file_exists($this->_templates_loc.'model_template.txt'))
-			{
-				$f = read_file($this->_templates_loc.'model_template.txt');
-			}
-			else
-			{
-				echo $this->_ret.'Couldn\'t find Model template.';
-				return FALSE;
-			}
-			$this->_find_replace['{{MODEL}}'] = $class_name;
-			$this->_find_replace['{{MODEL_FILE}}'] = $file_name;
-			$this->_find_replace['{{MO_EXTENDS}}'] = $this->_mo_extends;
-			$f = strtr($f,$this->_find_replace);
-			if(write_file('application/models/'.$file_name.'.php',$f))
-			{
-				echo $this->_ret.'Model '.$class_name.' has been created.';
-				return TRUE;
-			}
-			else
-			{
-				echo $this->_ret.'Couldn\'t write Model.';
-				return FALSE;
-			}
+			echo $this->_ret.'You need to provide a name for the model.';
 		}
 	}
 
@@ -201,115 +222,129 @@ class Matches extends CI_Controller {
 	*/
 	public function create_view($view)
 	{
-		$file_name = $view;
-		if(file_exists('application/views/'.$file_name.'_view.php'))
+		if(isset($view))
 		{
-			echo $this->_ret.$file_name.' View already exists in the application/views directory.';
+			$file_name = $view;
+			if(file_exists('application/views/'.$file_name.'_view.php'))
+			{
+				echo $this->_ret.$file_name.' View already exists in the application/views directory.';
+			}
+			else
+			{
+				if(file_exists($this->_templates_loc.'view_template.txt'))
+				{
+					$f = read_file($this->_templates_loc.'view_template.txt');
+				}
+				else
+				{
+					echo $this->_ret.'Couldn\'t find View template.';
+					return FALSE;
+				}
+				$this->_find_replace['{{VIEW}}'] = $file_name;
+				$f = strtr($f,$this->_find_replace);
+				$writeThisFile = fopen('application/views/'.$file_name.'_view.php',"w");
+				if(write_file('application/views/'.$file_name.'_view.php',$f))
+				{
+					echo $this->_ret.'View '.$file_name.' has been created.';
+					return TRUE;
+				}
+				else
+				{
+					echo $this->_ret.'Couldn\'t write View.';
+					return FALSE;
+				}
+			}
 		}
 		else
 		{
-			if(file_exists($this->_templates_loc.'view_template.txt'))
-			{
-				$f = read_file($this->_templates_loc.'view_template.txt');
-			}
-			else
-			{
-				echo $this->_ret.'Couldn\'t find View template.';
-				return FALSE;
-			}
-			$this->_find_replace['{{VIEW}}'] = $file_name;
-			$f = strtr($f,$this->_find_replace);
-			$writeThisFile = fopen('application/views/'.$file_name.'_view.php',"w");
-			if(write_file('application/views/'.$file_name.'_view.php',$f))
-			{
-				echo $this->_ret.'View '.$file_name.' has been created.';
-				return TRUE;
-			}
-			else
-			{
-				echo $this->_ret.'Couldn\'t write View.';
-				return FALSE;
-			}
+			echo $this->_ret.'You need to provide a name for the view file.';
 		}
 	}
 
 	public function create_migration($action, $table = NULL)
 	{
-		$class_name = 'Migration_'.ucfirst($action);
-		$this->config->load('migration',TRUE);
-		$migration_path = $this->config->item('migration_path','migration');
-		if(!file_exists($migration_path))
+		if(isset($action))
 		{
-			if(mkdir($migration_path,0755))
+			$class_name = 'Migration_'.ucfirst($action);
+			$this->config->load('migration',TRUE);
+			$migration_path = $this->config->item('migration_path','migration');
+			if(!file_exists($migration_path))
 			{
-				echo $this->_ret.'Folder migrations created.';
-			}
-			else
-			{
-				echo $this->_ret.'Couldn\'t create folder migrations.';
-				return FALSE;
-			}
-		}
-		$migration_type = $this->config->item('migration_type','migration');
-		if(empty($migration_type))
-		{
-			$migration_type = 'sequential';
-		}
-		if($migration_type == 'timestamp')
-		{
-			$file_name = date('YmdHis').'_'.strtolower($action);
-		}
-		else
-		{
-			$latest_migration = 0;
-			foreach (glob($migration_path.'*.php') as $migration)
-			{
-				$pattern = '/[0-9]{3}/';
-				if(preg_match($pattern, $migration,$matches))
+				if(mkdir($migration_path,0755))
 				{
-					$migration_version = intval($matches[0]);
-					$latest_migration = ($migration_version>$latest_version) ? $migration_version : $latest_version;
+					echo $this->_ret.'Folder migrations created.';
+				}
+				else
+				{
+					echo $this->_ret.'Couldn\'t create folder migrations.';
+					return FALSE;
 				}
 			}
-			$latest_migration = (string)++$latest_migration;
-			$file_name = str_pad($latest_migration, 3, '0', STR_PAD_LEFT).'_'.strtolower($action);
-		}
-		if(file_exists($migration_path.$file_name) OR (class_exists($class_name)))
-		{
-			echo $this->_ret.$class_name.' Migration already exists.';
-			return FALSE;
+			$migration_type = $this->config->item('migration_type','migration');
+			if(empty($migration_type))
+			{
+				$migration_type = 'sequential';
+			}
+			if($migration_type == 'timestamp')
+			{
+				$file_name = date('YmdHis').'_'.strtolower($action);
+			}
+			else
+			{
+				$latest_migration = 0;
+				foreach (glob($migration_path.'*.php') as $migration)
+				{
+					$pattern = '/[0-9]{3}/';
+					if(preg_match($pattern, $migration,$matches))
+					{
+						$migration_version = intval($matches[0]);
+						$latest_migration = ($migration_version>$latest_version) ? $migration_version : $latest_version;
+					}
+				}
+				$latest_migration = (string)++$latest_migration;
+				$file_name = str_pad($latest_migration, 3, '0', STR_PAD_LEFT).'_'.strtolower($action);
+			}
+			if(file_exists($migration_path.$file_name) OR (class_exists($class_name)))
+			{
+				echo $this->_ret.$class_name.' Migration already exists.';
+				return FALSE;
+			}
+			else
+			{
+				if(file_exists($this->_templates_loc.'migration_template.txt'))
+				{
+					$f = read_file($this->_templates_loc.'migration_template.txt');
+				}
+				else
+				{
+					echo $this->_ret.'Couldn\'t find Migration template.';
+					return FALSE;
+				}
+				$this->_find_replace['{{MIGRATION}}'] = $class_name;
+				$this->_find_replace['{{MIGRATION_FILE}}'] = $file_name;
+				$this->_find_replace['{{MIGRATION_PATH}}'] = $migration_path;
+				$this->_find_replace['{{MI_EXTENDS}}'] = $this->_mi_extends;
+				if(empty($table))
+				{
+					$table = $action;
+				}
+				$this->_find_replace['{{TABLE}}'] = $table;
+				$f = strtr($f,$this->_find_replace);
+				if(write_file($migration_path.$file_name.'.php',$f))
+				{
+					echo $this->_ret.'Migration '.$class_name.' has been created.';
+					return TRUE;
+				}
+				else
+				{
+					echo $this->_ret.'Couldn\'t write Migration.';
+					return FALSE;
+				}
+			}
 		}
 		else
 		{
-			if(file_exists($this->_templates_loc.'migration_template.txt'))
-			{
-				$f = read_file($this->_templates_loc.'migration_template.txt');
-			}
-			else
-			{
-				echo $this->_ret.'Couldn\'t find Migration template.';
-				return FALSE;
-			}
-			$this->_find_replace['{{MIGRATION}}'] = $class_name;
-			$this->_find_replace['{{MIGRATION_FILE}}'] = $file_name;
-			$this->_find_replace['{{MIGRATION_PATH}}'] = $migration_path;
-			$this->_find_replace['{{MI_EXTENDS}}'] = $this->_mi_extends;
-			if(empty($table))
-			{
-				$table = $action;
-			}
-			$this->_find_replace['{{TABLE}}'] = $table;
-			$f = strtr($f,$this->_find_replace);
-			if(write_file($migration_path.$file_name.'.php',$f))
-			{
-				echo $this->_ret.'Migration '.$class_name.' has been created.';
-				return TRUE;
-			}
-			else
-			{
-				echo $this->_ret.'Couldn\'t write Migration.';
-				return FALSE;
-			}
+			echo $this->_ret.'You need to provide a name for the migration.';
 		}
 	}
 
@@ -333,7 +368,6 @@ class Matches extends CI_Controller {
 				if(strpos($f, $search)>=0)
 				{
 					$f = str_replace($search, $replace, $f);
-					//chmod($file, 0777);
 					if(write_file($file,$f))
 					{
 						echo $this->_ret.'Encryption key '.$key.' added to '.$file.'.';
