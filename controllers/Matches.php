@@ -68,6 +68,7 @@ class Matches extends CI_Controller {
 			echo "\n";
 			echo "Thank you, continuing...".$this->_ret2;
 		}
+		$this->load->helper('file');
 	}
 	/*
 	* return string
@@ -130,7 +131,7 @@ class Matches extends CI_Controller {
 		{
 			if(file_exists($this->_templates_loc.'controller_template.txt'))
 			{
-				$f = file_get_contents($this->_templates_loc.'controller_template.txt');
+				$f = read_file($this->_templates_loc.'controller_template.txt');
 			}
 			else
 			{
@@ -142,10 +143,8 @@ class Matches extends CI_Controller {
 			$this->_find_replace['{{MV}}'] = strtolower($class_name);
 			$this->_find_replace['{{C_EXTENDS}}'] = $this->_c_extends;
 			$f = strtr($f,$this->_find_replace);
-			$writeThisFile = fopen('application/controllers/'.$file_name.'.php',"w");
-			if(fwrite($writeThisFile,$f))
+			if(write_file('application/controllers/'.$file_name.'.php',$f))
 			{
-				fclose($writeThisFile);
 				echo $this->_ret.'Controller '.$class_name.' has been created.';
 				return TRUE;
 			}
@@ -172,7 +171,7 @@ class Matches extends CI_Controller {
 		{
 			if(file_exists($this->_templates_loc.'model_template.txt'))
 			{
-				$f = file_get_contents($this->_templates_loc.'model_template.txt');
+				$f = read_file($this->_templates_loc.'model_template.txt');
 			}
 			else
 			{
@@ -183,10 +182,8 @@ class Matches extends CI_Controller {
 			$this->_find_replace['{{MODEL_FILE}}'] = $file_name;
 			$this->_find_replace['{{MO_EXTENDS}}'] = $this->_mo_extends;
 			$f = strtr($f,$this->_find_replace);
-			$writeThisFile = fopen('application/models/'.$file_name.'.php',"w");
-			if(fwrite($writeThisFile,$f))
+			if(write_file('application/models/'.$file_name.'.php',$f))
 			{
-				fclose($writeThisFile);
 				echo $this->_ret.'Model '.$class_name.' has been created.';
 				return TRUE;
 			}
@@ -213,7 +210,7 @@ class Matches extends CI_Controller {
 		{
 			if(file_exists($this->_templates_loc.'view_template.txt'))
 			{
-				$f = file_get_contents($this->_templates_loc.'view_template.txt');
+				$f = read_file($this->_templates_loc.'view_template.txt');
 			}
 			else
 			{
@@ -223,9 +220,8 @@ class Matches extends CI_Controller {
 			$this->_find_replace['{{VIEW}}'] = $file_name;
 			$f = strtr($f,$this->_find_replace);
 			$writeThisFile = fopen('application/views/'.$file_name.'_view.php',"w");
-			if(fwrite($writeThisFile,$f))
+			if(write_file('application/views/'.$file_name.'_view.php',$f))
 			{
-				fclose($writeThisFile);
 				echo $this->_ret.'View '.$class_name.' has been created.';
 				return TRUE;
 			}
@@ -287,7 +283,7 @@ class Matches extends CI_Controller {
 		{
 			if(file_exists($this->_templates_loc.'migration_template.txt'))
 			{
-				$f = file_get_contents($this->_templates_loc.'migration_template.txt');
+				$f = read_file($this->_templates_loc.'migration_template.txt');
 			}
 			else
 			{
@@ -304,10 +300,8 @@ class Matches extends CI_Controller {
 			}
 			$this->_find_replace['{{TABLE}}'] = $table;
 			$f = strtr($f,$this->_find_replace);
-			$writeThisFile = fopen($migration_path.$file_name.'.php',"w");
-			if(fwrite($writeThisFile,$f))
+			if(write_file($migration_path.$file_name.'.php',$f))
 			{
-				fclose($writeThisFile);
 				echo $this->_ret.'Migration '.$class_name.' has been created.';
 				return TRUE;
 			}
@@ -318,6 +312,64 @@ class Matches extends CI_Controller {
 			}
 		}
 	}
+
+	public function encryption_key($string = NULL)
+	{
+		if(is_null($string))
+		{
+			$string = microtime();
+		}
+		$key = hash('ripemd128', $string);
+		$files = $this->_search_files('application/config/','config.php');
+		if(!empty($files))
+		{
+			$search = '$config[\'encryption_key\'] = \'\';';
+			$replace = '$config[\'encryption_key\'] = \''.$key.'\';';
+			foreach($files as $file)
+			{
+				$file = trim($file);
+				// is weird, but it seems that the file cannot be found unless I do some trimming
+				$f = read_file($file);
+				if(strpos($f, $search)>=0)
+				{
+					$f = str_replace($search, $replace, $f);
+					//chmod($file, 0777);
+					if(write_file($file,$f))
+					{
+						echo $this->_ret.'Encryption key '.$key.' added to '.$file.'.';
+					}
+					else
+					{
+						echo $this->_ret.'Couldn\'t write encryption key '.$key.' to '.$file.'.';
+					}
+				}
+				else
+				{
+					echo $this->_ret.'Couldn\t find encryption_key or encryption_key already exists in '.$file.'.';
+				}
+			}
+		}
+		else
+		{
+			echo $this->_ret.'Couldn\'t find config.php';
+		}
+	}
+	
+	private function _search_files($path,$file)
+	{
+		$dir = new RecursiveDirectoryIterator($path);
+	    $ite = new RecursiveIteratorIterator($dir);
+		$files = array();
+	    foreach($ite as $oFile)
+	    {
+	    	if($oFile->getFilename()=='config.php')
+	    	{
+	    		$found = str_replace('\\', '/', $this->_ret.$oFile->getPath().'/'.$file);
+				$files[] = $found;
+			}
+		}
+		return $files;
+    }
 
 	private function _filename($str)
 	{
