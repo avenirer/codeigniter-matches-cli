@@ -222,7 +222,7 @@ class Matches extends CI_Controller {
 			$writeThisFile = fopen('application/views/'.$file_name.'_view.php',"w");
 			if(write_file('application/views/'.$file_name.'_view.php',$f))
 			{
-				echo $this->_ret.'View '.$class_name.' has been created.';
+				echo $this->_ret.'View '.$file_name.' has been created.';
 				return TRUE;
 			}
 			else
