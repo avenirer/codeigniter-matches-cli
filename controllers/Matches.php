@@ -83,17 +83,6 @@ class Matches extends CI_Controller {
 	{
 		echo 'Hello. Need help to ignite somethin\'?'.$this->_ret;
 	}
-	/*
-	* list the available commands
-	* 
-	*/
-	public function help()
-	{
-		echo 'todo';
-	}
-	
-	
-	
 	
 	/*
 	* CLI tester
@@ -103,9 +92,29 @@ class Matches extends CI_Controller {
 	{
 		echo 'Hello '. $name;
 	}
+	
+	
 	/*
-	* create application's controller file, model file, and view file
-	* @migration, this you can extend
+	* list the available commands
+	* 
+	*/
+	public function help()
+	{
+		echo $this->_ret.'Available commands:';
+		echo $this->_ret2.' create';
+		echo $this->_ret.'  app name_of_app';
+		echo $this->_ret.'  controller name_of_controller';
+		echo $this->_ret.'  migration name_of_migration name_of_table-(OPTIONAL)';
+		echo $this->_ret.'  model name_of_model';
+		echo $this->_ret.'  view name_of_view';
+		echo $this->_ret2.' encryption_key string_to_hash-(OPTIONAL)';
+		echo $this->_ret2.$this->_ret2;
+	}
+	
+	
+	
+	/*
+	* create application's controller file, model file, view file and migration file
 	*/
 	
 	public function create($what,$name='')
