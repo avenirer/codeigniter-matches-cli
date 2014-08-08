@@ -38,7 +38,7 @@ class Matches extends CI_Controller {
 	private $_c_extends = 'CI';
 	private $_mo_extends = 'CI';
 	private $_mi_extends = 'CI';
-	private $_templates_loc = 'application/views/matches/templates/';
+	private $_templates_loc = 'application/views/matches_templates/';
 	private $_tab = "\t";
 	private $_tab2 = "\t\t";
 	private $_tab3 = "\t\t\t";
