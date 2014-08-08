@@ -38,7 +38,7 @@ class Matches extends CI_Controller {
 	private $_c_extends = 'CI';
 	private $_mo_extends = 'CI';
 	private $_mi_extends = 'CI';
-	private $_templates_loc = 'application/views/matches_templates/';
+	private $_templates_loc = 'application/views/matches/templates/';
 	private $_tab = "\t";
 	private $_tab2 = "\t\t";
 	private $_tab3 = "\t\t\t";
@@ -51,7 +51,7 @@ class Matches extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		// make sure the user knows he works with a production ready app
+		
 		if (ENVIRONMENT === 'production')
 		{
 			echo "\n";
@@ -68,7 +68,6 @@ class Matches extends CI_Controller {
 			echo "\n";
 			echo "Thank you, continuing...".$this->_ret2;
 		}
-		//load file helper to work with files
 		$this->load->helper('file');
 	}
 	/*
@@ -79,18 +78,63 @@ class Matches extends CI_Controller {
 		echo 'Hello. Need help to ignite somethin\'?'.$this->_ret;
 	}
 	/*
-	 * list the available commands
-	 * 
-	 */
+	* list the available commands
+	* 
+	*/
 	public function help()
 	{
 		echo 'todo';
 	}
 	
+	
+	
+	
 	/*
-	 * create application's controller file, model file, and view file
-	 * 
-	 */
+	* CLI tester
+	* returns string 
+	*/
+	public function hello($name)
+	{
+		echo 'Hello '. $name;
+	}
+	/*
+	* create application's controller file, model file, and view file
+	* @migration, this you can extend
+	*/
+	
+	public function create($what,$name='')
+	{
+		$what = filter_var($what, FILTER_SANITIZE_STRING);
+		$name = filter_var($name, FILTER_SANITIZE_STRING);
+		$can_create = array('app','controller','model','migration');
+		if(in_array($what, $can_create))
+		{
+			switch($what)
+			{
+				case 'app':
+					$this->create_app($name);
+				break;
+				case 'controller':
+					$this->create_controller($name);
+				break;
+				case 'model':
+					$this->create_model($name);
+				break;
+				case 'view':
+					$this->create_view($name);
+				break;
+				case 'migration':
+					$this->create_migration($name);
+				break;
+			}
+				
+		}
+		else
+		{
+			echo 'I can only create: app, controller, model, migration';
+		}
+	}
+	
 	public function create_app($app)
 	{
 		if(isset($app))
@@ -113,11 +157,9 @@ class Matches extends CI_Controller {
 		}
 	}
 	/*
-	 * create_controller()
-	 * creates a controller
-	 * @param string - name of controller to be created
-	 * @return mixed
-	 */
+	* create controller
+	* returns boolean true
+	*/
 	public function create_controller($controller)
 	{
 		if(isset($controller))
@@ -162,11 +204,9 @@ class Matches extends CI_Controller {
 		}
 	}
 	/*
-	 * create_model()
-	 * creates a model
-	 * @param string - name of model to be created
-	 * @return mixed
-	 */
+	* create model
+	* returns boolean true
+	*/
 	public function create_model($model)
 	{
 		if(isset($model))
@@ -211,11 +251,9 @@ class Matches extends CI_Controller {
 	}
 
 	/*
-	 * create_view()
-	 * creates a view
-	 * @param string - name of view file to be created
-	 * @return mixed
-	 */
+	* create view 
+	* returns string
+	*/
 	public function create_view($view)
 	{
 		if(isset($view))
@@ -256,13 +294,14 @@ class Matches extends CI_Controller {
 			echo $this->_ret.'You need to provide a name for the view file.';
 		}
 	}
-	/*
-	 * create_migration()
-	 * creates a migration file inside migrations folder
-	 * @param string $action - name of the migration to be created
-	 * @param string $table - name of the table that the migration refers to (optional)
-	 * @return mixed
-	 */
+
+	
+
+	public function do_migration()
+	{
+		echo 'test';
+	}
+
 	public function create_migration($action, $table = NULL)
 	{
 		if(isset($action))
@@ -349,12 +388,7 @@ class Matches extends CI_Controller {
 			echo $this->_ret.'You need to provide a name for the migration.';
 		}
 	}
-	/*
-	 * encryption_key()
-	 * creates an encryption key
-	 * @param string $string - string to be hashed (optional)
-	 * @return mixed
-	 */
+
 	public function encryption_key($string = NULL)
 	{
 		if(is_null($string))
@@ -410,13 +444,8 @@ class Matches extends CI_Controller {
 			}
 		}
 		return $files;
-    	}
-    	/*
-	 * _filename($str)
-	 * returns a file name format depending on the CI version
-	 * @param string $str - name of file
-	 * @return new_filename
-	 */
+    }
+
 	private function _filename($str)
 	{
 		$file_name = strtolower($str);
