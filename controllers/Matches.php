@@ -35,10 +35,10 @@ ini_set('memory_limit', '256M');
 
 /* here we go */
 class Matches extends CI_Controller {
-	private $_c_extends = 'CI';
-	private $_mo_extends = 'CI';
-	private $_mi_extends = 'CI';
-	private $_templates_loc = 'application/views/matches_templates/';
+	private $_c_extends;
+	private $_mo_extends;
+	private $_mi_extends;
+	private $_templates_loc;
 	private $_tab = "\t";
 	private $_tab2 = "\t\t";
 	private $_tab3 = "\t\t\t";
@@ -51,6 +51,12 @@ class Matches extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		
+		$this->config->load('matches',TRUE);
+		$this->_templates_loc = $this->config->item('templates', 'matches');
+		$this->_c_extends = $this->config->item('c_extends', 'matches');
+		$this->_mo_extends = $this->config->item('mo_extends', 'matches');
+		$this->_mi_extends = $this->config->item('mi_extends', 'matches');
 		
 		if (ENVIRONMENT === 'production')
 		{
@@ -131,7 +137,7 @@ class Matches extends CI_Controller {
 		}
 		else
 		{
-			echo 'I can only create: app, controller, model, migration';
+			echo  $this->_ret.'I can only create: app, controller, model, migration';
 		}
 	}
 	
