@@ -28,7 +28,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 
 /* first we make sure this isn't called from a web browser */
-if (isset($_SERVER['REMOTE_ADDR'])) die('Permission denied.');
+if ( PHP_SAPI === 'cli' ) exit('No web access allowed');
 /* raise or eliminate limits we would otherwise put on http requests */
 set_time_limit(0);
 ini_set('memory_limit', '256M');
