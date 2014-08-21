@@ -314,7 +314,8 @@ class Matches extends CI_Controller {
 
 	public function do_migration()
 	{
-		echo 'test';
+		$this->load->library('migration');
+		$this->migration->current();
 	}
 
 	public function create_migration($action, $table = NULL)
