@@ -1,6 +1,6 @@
 <?php
 #!/usr/bin/php
-if (!defined('BASEPATH')) exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
 * Copyright (C) 2014 @avenirer [avenir.ro@gmail.com]
@@ -117,13 +117,18 @@ class Matches extends CI_Controller {
 	* create application's controller file, model file, view file and migration file
 	*/
 	
-	public function create($what,$name='')
+	public function create($what=NULL,$name=NULL)
 	{
 		$what = filter_var($what, FILTER_SANITIZE_STRING);
 		$name = filter_var($name, FILTER_SANITIZE_STRING);
 		$can_create = array('app','controller','model','migration');
 		if(in_array($what, $can_create))
 		{
+			if(empty($name))
+			{
+				echo  $this->_ret.'You didn\'t provide a name for '.$what;
+				return FALSE;
+			}
 			switch($what)
 			{
 				case 'app':
