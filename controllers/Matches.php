@@ -117,7 +117,7 @@ class Matches extends CI_Controller {
 	* create application's controller file, model file, view file and migration file
 	*/
 	
-	public function create($what=NULL,$name=NULL)
+	public function create($what = NULL, $name = NULL)
 	{
 		$what = filter_var($what, FILTER_SANITIZE_STRING);
 		$name = filter_var($name, FILTER_SANITIZE_STRING);
@@ -155,7 +155,7 @@ class Matches extends CI_Controller {
 		}
 	}
 	
-	public function create_app($app)
+	public function create_app($app = NULL)
 	{
 		if(isset($app))
 		{	
@@ -180,7 +180,7 @@ class Matches extends CI_Controller {
 	* create controller
 	* returns boolean true
 	*/
-	public function create_controller($controller)
+	public function create_controller($controller = NULL)
 	{
 		if(isset($controller))
 		{
@@ -227,7 +227,7 @@ class Matches extends CI_Controller {
 	* create model
 	* returns boolean true
 	*/
-	public function create_model($model)
+	public function create_model($model = NULL)
 	{
 		if(isset($model))
 		{
@@ -274,7 +274,7 @@ class Matches extends CI_Controller {
 	* create view 
 	* returns string
 	*/
-	public function create_view($view)
+	public function create_view($view = NULL)
 	{
 		if(isset($view))
 		{
@@ -323,7 +323,7 @@ class Matches extends CI_Controller {
 		$this->migration->current();
 	}
 
-	public function create_migration($action, $table = NULL)
+	public function create_migration($action = NULL, $table = NULL)
 	{
 		if(isset($action))
 		{
