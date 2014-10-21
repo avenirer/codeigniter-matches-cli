@@ -194,7 +194,7 @@ class Matches extends CI_Controller {
 			{
 				if(file_exists($this->_templates_loc.'controller_template.txt'))
 				{
-					$f = read_file($this->_templates_loc.'controller_template.txt');
+					$f = file_get_contents($this->_templates_loc.'controller_template.txt');
 				}
 				else
 				{
@@ -241,7 +241,7 @@ class Matches extends CI_Controller {
 			{
 				if(file_exists($this->_templates_loc.'model_template.txt'))
 				{
-					$f = read_file($this->_templates_loc.'model_template.txt');
+					$f = file_get_contents($this->_templates_loc.'model_template.txt');
 				}
 				else
 				{
@@ -287,7 +287,7 @@ class Matches extends CI_Controller {
 			{
 				if(file_exists($this->_templates_loc.'view_template.txt'))
 				{
-					$f = read_file($this->_templates_loc.'view_template.txt');
+					$f = file_get_contents($this->_templates_loc.'view_template.txt');
 				}
 				else
 				{
@@ -375,7 +375,7 @@ class Matches extends CI_Controller {
 			{
 				if(file_exists($this->_templates_loc.'migration_template.txt'))
 				{
-					$f = read_file($this->_templates_loc.'migration_template.txt');
+					$f = file_get_contents($this->_templates_loc.'migration_template.txt');
 				}
 				else
 				{
@@ -426,7 +426,7 @@ class Matches extends CI_Controller {
 			{
 				$file = trim($file);
 				// is weird, but it seems that the file cannot be found unless I do some trimming
-				$f = read_file($file);
+				$f = file_get_contents($file);
 				if(strpos($f, $search)>=0)
 				{
 					$f = str_replace($search, $replace, $f);
