@@ -417,7 +417,7 @@ class Matches extends CI_Controller {
 			$string = microtime();
 		}
 		$key = hash('ripemd128', $string);
-		$files = $this->_search_files('application/config/','config.php');
+		$files = $this->_search_files(APPPATH.'config/','config.php');
 		if(!empty($files))
 		{
 			$search = '$config[\'encryption_key\'] = \'\';';
