@@ -427,7 +427,7 @@ class Matches extends CI_Controller {
 				$file = trim($file);
 				// is weird, but it seems that the file cannot be found unless I do some trimming
 				$f = file_get_contents($file);
-				if(strpos($f, $search)>=0)
+				if(strpos($f, $search)!==FALSE)
 				{
 					$f = str_replace($search, $replace, $f);
 					if(write_file($file,$f))
