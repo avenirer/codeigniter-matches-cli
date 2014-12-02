@@ -206,7 +206,7 @@ class Matches extends CI_Controller {
 				$this->_find_replace['{{MV}}'] = strtolower($class_name);
 				$this->_find_replace['{{C_EXTENDS}}'] = $this->_c_extends;
 				$f = strtr($f,$this->_find_replace);
-				if(write_file(APPPATH.'application/controllers/'.$file_name.'.php',$f))
+				if(write_file(APPPATH.'controllers/'.$file_name.'.php',$f))
 				{
 					echo $this->_ret.'Controller '.$class_name.' has been created.';
 					return TRUE;
@@ -233,15 +233,15 @@ class Matches extends CI_Controller {
 		{
 			$class_name = ucfirst($model).'_model';
 			$file_name = $this->_filename($class_name);
-			if(file_exists('application/models/'.$file_name.'.php') OR (class_exists($class_name)))
+			if(file_exists(APPPATH.'models/'.$file_name.'.php') OR (class_exists($class_name)))
 			{
 				echo $this->_ret.$class_name.' Model already exists in the application/models directory.';
 			}
 			else
 			{
-				if(file_exists($this->_templates_loc.'model_template.txt'))
+				if(file_exists(APPPATH.$this->_templates_loc.'model_template.txt'))
 				{
-					$f = file_get_contents($this->_templates_loc.'model_template.txt');
+					$f = file_get_contents(APPPATH.$this->_templates_loc.'model_template.txt');
 				}
 				else
 				{
@@ -252,7 +252,7 @@ class Matches extends CI_Controller {
 				$this->_find_replace['{{MODEL_FILE}}'] = $file_name;
 				$this->_find_replace['{{MO_EXTENDS}}'] = $this->_mo_extends;
 				$f = strtr($f,$this->_find_replace);
-				if(write_file('application/models/'.$file_name.'.php',$f))
+				if(write_file(APPPATH.'models/'.$file_name.'.php',$f))
 				{
 					echo $this->_ret.'Model '.$class_name.' has been created.';
 					return TRUE;
@@ -279,7 +279,7 @@ class Matches extends CI_Controller {
 		if(isset($view))
 		{
 			$file_name = $view;
-			if(file_exists('application/views/'.$file_name.'_view.php'))
+			if(file_exists(APPPATH.'views/'.$file_name.'_view.php'))
 			{
 				echo $this->_ret.$file_name.' View already exists in the application/views directory.';
 			}
@@ -296,8 +296,8 @@ class Matches extends CI_Controller {
 				}
 				$this->_find_replace['{{VIEW}}'] = $file_name;
 				$f = strtr($f,$this->_find_replace);
-				$writeThisFile = fopen('application/views/'.$file_name.'_view.php',"w");
-				if(write_file('application/views/'.$file_name.'_view.php',$f))
+				$writeThisFile = fopen(APPPATH.'views/'.$file_name.'_view.php',"w");
+				if(write_file(APPPATH.'views/'.$file_name.'_view.php',$f))
 				{
 					echo $this->_ret.'View '.$file_name.' has been created.';
 					return TRUE;
