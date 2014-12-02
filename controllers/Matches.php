@@ -186,15 +186,15 @@ class Matches extends CI_Controller {
 		{
 			$class_name = ucfirst($controller);
 			$file_name = $this->_filename($class_name);
-			if(file_exists('application/controllers/'.$file_name.'.php') OR (class_exists($class_name)))
+			if(file_exists(APPPATH.'controllers/'.$file_name.'.php') OR (class_exists($class_name)))
 			{
 				echo $this->_ret.$class_name.' Controller already exists in the application/controllers directory.';
 			}
 			else
 			{
-				if(file_exists($this->_templates_loc.'controller_template.txt'))
+				if(file_exists(APPPATH.$this->_templates_loc.'controller_template.txt'))
 				{
-					$f = file_get_contents($this->_templates_loc.'controller_template.txt');
+					$f = file_get_contents(APPPATH.$this->_templates_loc.'controller_template.txt');
 				}
 				else
 				{
@@ -206,7 +206,7 @@ class Matches extends CI_Controller {
 				$this->_find_replace['{{MV}}'] = strtolower($class_name);
 				$this->_find_replace['{{C_EXTENDS}}'] = $this->_c_extends;
 				$f = strtr($f,$this->_find_replace);
-				if(write_file('application/controllers/'.$file_name.'.php',$f))
+				if(write_file(APPPATH.'application/controllers/'.$file_name.'.php',$f))
 				{
 					echo $this->_ret.'Controller '.$class_name.' has been created.';
 					return TRUE;
