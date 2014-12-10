@@ -69,10 +69,10 @@
 <ul>
   
   <li><code>create app <em>name_of_app</em></code> - creates a MVC stack (controller, model, view) having name_of_app as names.</li>
-  <li><code>create controller <em>name_of_controller</em></code> - creates a controller having name_of_controller as name.</li>
+  <li><code>create controller <em>name_of_controller</em></code> - creates a controller having name_of_controller as name. You can put the controller inside a directory. Directories are delimited with ".". So, if you want to create the controller inside controllers/admin, you can do <code>create controller <em>admin.name_of_controller</em></code></li>
   <li><code>create migration <em>name_of_migration</em> <em>name_of_table-(OPTIONAL)</em></code> - creates a migration having name_of_migration prefixed with version as file name. If no name_of_table is given, will name the table as the name_of_migration.</li>
-  <li><code>create model <em>name_of_model</em></code> - creates a model having name_of_model as name.</li>
-  <li><code>create view <em>name_of_view</em></code> - creates a view having name_of_view as file name.</li>
+  <li><code>create model <em>name_of_model</em></code> - creates a model having name_of_model as name. You can put the model inside a directory. Directories are delimited with ".". So, if you want to create the model inside models/admin, you can do <code>create model <em>admin.name_of_model</em></code></li>
+  <li><code>create view <em>name_of_view</em></code> - creates a view having name_of_view as file name.. You can put the view inside a directory. Directories are delimited with ".". So, if you want to create the view inside views/admin, you can do <code>create view <em>admin.name_of_controller</em></code></li>
 </ul>
 
 <h3>encryption_key</h3>
