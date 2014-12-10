@@ -12,4 +12,4 @@ class {{MODEL}} extends {{MO_EXTENDS}}_Model
 	}
 }
 /* End of file '{{MODEL_FILE}}' */
-/* Location: ./application/models/{{CONTROLLER_FILE}}.php */
+/* Location: ./application/models/{{MODEL_FILE}} */
