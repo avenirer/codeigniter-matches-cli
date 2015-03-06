@@ -24,9 +24,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * License info: http://www.dbad-license.org/
  */
 
-
-
-
 /* first we make sure this isn't called from a web browser */
 if ( PHP_SAPI !== 'cli' ) exit('No web access allowed');
 /* raise or eliminate limits we would otherwise put on http requests */
@@ -53,7 +50,7 @@ class Matches extends CI_Controller {
         parent::__construct();
 
         $this->config->load('matches',TRUE);
-        $this->_templates_loc = $this->config->item('templates', 'matches');
+        $this->_templates_loc = APPPATH.$this->config->item('templates', 'matches');
         $this->_c_extends = $this->config->item('c_extends', 'matches');
         $this->_mo_extends = $this->config->item('mo_extends', 'matches');
         $this->_mi_extends = $this->config->item('mi_extends', 'matches');
@@ -90,7 +87,7 @@ class Matches extends CI_Controller {
     */
     public function hello($name)
     {
-        echo 'Hello '. $name;
+        echo 'Hello '. $name.$this->_ret;
     }
 
 
@@ -194,9 +191,9 @@ class Matches extends CI_Controller {
             }
             else
             {
-                if(file_exists(APPPATH.$this->_templates_loc.'controller_template.txt'))
+                if(file_exists($this->_templates_loc.'controller_template.txt'))
                 {
-                    $f = file_get_contents(APPPATH.$this->_templates_loc.'controller_template.txt');
+                    $f = file_get_contents($this->_templates_loc.'controller_template.txt');
                 }
                 else
                 {
@@ -247,9 +244,9 @@ class Matches extends CI_Controller {
             }
             else
             {
-                if(file_exists(APPPATH.$this->_templates_loc.'model_template.txt'))
+                if(file_exists($this->_templates_loc.'model_template.txt'))
                 {
-                    $f = file_get_contents(APPPATH.$this->_templates_loc.'model_template.txt');
+                    $f = file_get_contents($this->_templates_loc.'model_template.txt');
                 }
                 else
                 {
@@ -299,9 +296,9 @@ class Matches extends CI_Controller {
             }
             else
             {
-                if(file_exists(APPPATH.$this->_templates_loc.'view_template.txt'))
+                if(file_exists($this->_templates_loc.'view_template.txt'))
                 {
-                    $f = file_get_contents(APPPATH.$this->_templates_loc.'view_template.txt');
+                    $f = file_get_contents($this->_templates_loc.'view_template.txt');
                 }
                 else
                 {
@@ -332,12 +329,13 @@ class Matches extends CI_Controller {
         }
     }
 
-
-
     public function do_migration()
     {
         $this->load->library('migration');
-        $this->migration->current();
+        if ($this->migration->current() === FALSE)
+        {
+            show_error($this->migration->error_string());
+        }
     }
 
     public function create_migration($action = NULL, $table = NULL)
@@ -374,10 +372,10 @@ class Matches extends CI_Controller {
                 foreach (glob($migration_path.'*.php') as $migration)
                 {
                     $pattern = '/[0-9]{3}/';
-                    if(preg_match($pattern, $migration,$matches))
+                    if(preg_match($pattern, $migration, $matches))
                     {
                         $migration_version = intval($matches[0]);
-                        $latest_migration = ($migration_version>$latest_version) ? $migration_version : $latest_version;
+                        $latest_migration = ($migration_version > $latest_migration) ? $migration_version : $latest_migration;
                     }
                 }
                 $latest_migration = (string)++$latest_migration;
