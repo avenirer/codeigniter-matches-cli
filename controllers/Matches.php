@@ -73,6 +73,21 @@ class Matches extends CI_Controller {
         }
         $this->load->helper('file');
     }
+
+    public function _remap($method, $params=array())
+    {
+        if(strpos($method,':'))
+        {
+            $method = str_replace(':','_',$method);
+        }
+        if(method_exists($this,$method))
+        {
+            return call_user_func_array(array($this,$method),$params);
+        }
+        // Some code here...
+    }
+
+
     /*
     * return string
     */
@@ -177,8 +192,23 @@ class Matches extends CI_Controller {
     * create controller
     * returns boolean true
     */
-    public function create_controller($controller = NULL)
+    public function create_controller()
     {
+        $available = array('extend'=>'extend','e'=>'extend');
+        $params = func_get_args();
+        $arguments = array();
+        foreach($params as $parameter)
+        {
+            $argument = explode('=',$parameter);
+            if(sizeof($argument)==1 && !isset($controller))
+            {
+                $controller = $argument[0];
+            }
+            elseif(array_key_exists($argument[0],$available))
+            {
+                $arguments[$available[$argument[0]]] = $argument[1];
+            }
+        }
         if(isset($controller))
         {
             $names = $this->_names($controller);
@@ -203,7 +233,7 @@ class Matches extends CI_Controller {
                 $this->_find_replace['{{CONTROLLER}}'] = $class_name;
                 $this->_find_replace['{{CONTROLLER_FILE}}'] = $file_name.'.php';
                 $this->_find_replace['{{MV}}'] = strtolower($class_name);
-                $this->_find_replace['{{C_EXTENDS}}'] = $this->_c_extends;
+                $this->_find_replace['{{C_EXTENDS}}'] = array_key_exists('extend',$arguments) ? strtoupper($arguments['extend']) : $this->_c_extends;
                 $f = strtr($f,$this->_find_replace);
                 if(strlen($directories)>0 && !file_exists(APPPATH.'controllers/'.$directories))
                 {
@@ -230,8 +260,23 @@ class Matches extends CI_Controller {
     * create model
     * returns boolean true
     */
-    public function create_model($model = NULL)
+    public function create_model()
     {
+        $available = array('extend'=>'extend','e'=>'extend');
+        $params = func_get_args();
+        $arguments = array();
+        foreach($params as $parameter)
+        {
+            $argument = explode('=',$parameter);
+            if(sizeof($argument)==1 && !isset($model))
+            {
+                $model = $argument[0];
+            }
+            elseif(array_key_exists($argument[0],$available))
+            {
+                $arguments[$available[$argument[0]]] = $argument[1];
+            }
+        }
         if(isset($model))
         {
             $names = $this->_names($model);
@@ -285,6 +330,21 @@ class Matches extends CI_Controller {
     */
     public function create_view($view = NULL)
     {
+        $available = array();
+        $params = func_get_args();
+        $arguments = array();
+        foreach($params as $parameter)
+        {
+            $argument = explode('=',$parameter);
+            if(sizeof($argument)==1 && !isset($view))
+            {
+                $view = $argument[0];
+            }
+            elseif(array_key_exists($argument[0],$available))
+            {
+                $arguments[$available[$argument[0]]] = $argument[1];
+            }
+        }
         if(isset($view))
         {
             $names = $this->_names($view);
@@ -337,7 +397,7 @@ class Matches extends CI_Controller {
             show_error($this->migration->error_string());
         }
     }
-    
+
     public function verify_migration_enabled()
     {
         $migration_enabled = $this->config->item('migration_enabled');
@@ -348,8 +408,23 @@ class Matches extends CI_Controller {
         return TRUE;
     }
 
-    public function create_migration($action = NULL, $table = NULL)
+    public function create_migration()
     {
+        $available = array('extend'=>'extend','e'=>'extend','table'=>'table','t'=>'table');
+        $params = func_get_args();
+        $arguments = array();
+        foreach($params as $parameter)
+        {
+            $argument = explode('=',$parameter);
+            if(sizeof($argument)==1 && !isset($action))
+            {
+                $action = $argument[0];
+            }
+            elseif(array_key_exists($argument[0],$available))
+            {
+                $arguments[$available[$argument[0]]] = $argument[1];
+            }
+        }
         if(isset($action))
         {
             $class_name = 'Migration_'.ucfirst($action);
@@ -411,10 +486,11 @@ class Matches extends CI_Controller {
                 $this->_find_replace['{{MIGRATION}}'] = $class_name;
                 $this->_find_replace['{{MIGRATION_FILE}}'] = $file_name;
                 $this->_find_replace['{{MIGRATION_PATH}}'] = $migration_path;
-                $this->_find_replace['{{MI_EXTENDS}}'] = $this->_mi_extends;
-                if(empty($table))
+                $this->_find_replace['{{MI_EXTENDS}}'] = array_key_exists('extend',$arguments) ? strtoupper($arguments['extend']) : $this->_mi_extends;
+                $table = 'SET_YOUR_TABLE_HERE';
+                if(array_key_exists('table',$arguments))
                 {
-                    $table = $action;
+                    $table = $arguments['table'];
                 }
                 $this->_find_replace['{{TABLE}}'] = $table;
                 $f = strtr($f,$this->_find_replace);
