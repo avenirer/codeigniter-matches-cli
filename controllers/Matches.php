@@ -337,6 +337,16 @@ class Matches extends CI_Controller {
             show_error($this->migration->error_string());
         }
     }
+    
+    public function verify_migration_enabled()
+    {
+        $migration_enabled = $this->config->item('migration_enabled');
+        if($migration_enabled===FALSE)
+        {
+            echo $this->_ret.'Your app is not migration enabled. Enable it inside application/config/migration.php';
+        }
+        return TRUE;
+    }
 
     public function create_migration($action = NULL, $table = NULL)
     {
@@ -357,6 +367,7 @@ class Matches extends CI_Controller {
                     return FALSE;
                 }
             }
+            $this->verify_migration_enabled();
             $migration_type = $this->config->item('migration_type','migration');
             if(empty($migration_type))
             {
