@@ -221,15 +221,7 @@ class Matches extends CI_Controller {
             }
             else
             {
-                if(file_exists($this->_templates_loc.'controller_template.txt'))
-                {
-                    $f = file_get_contents($this->_templates_loc.'controller_template.txt');
-                }
-                else
-                {
-                    echo $this->_ret.'Couldn\'t find Controller template.';
-                    return FALSE;
-                }
+                if($this->_get_template('controller')===FALSE) return FALSE;
                 $this->_find_replace['{{CONTROLLER}}'] = $class_name;
                 $this->_find_replace['{{CONTROLLER_FILE}}'] = $file_name.'.php';
                 $this->_find_replace['{{MV}}'] = strtolower($class_name);
@@ -289,15 +281,7 @@ class Matches extends CI_Controller {
             }
             else
             {
-                if(file_exists($this->_templates_loc.'model_template.txt'))
-                {
-                    $f = file_get_contents($this->_templates_loc.'model_template.txt');
-                }
-                else
-                {
-                    echo $this->_ret.'Couldn\'t find Model template.';
-                    return FALSE;
-                }
+                if($this->_get_template('model')===FALSE) return FALSE;
                 $this->_find_replace['{{MODEL}}'] = $class_name;
                 $this->_find_replace['{{MODEL_FILE}}'] = $file_name.'.php';
                 $this->_find_replace['{{MO_EXTENDS}}'] = $this->_mo_extends;
@@ -356,15 +340,7 @@ class Matches extends CI_Controller {
             }
             else
             {
-                if(file_exists($this->_templates_loc.'view_template.txt'))
-                {
-                    $f = file_get_contents($this->_templates_loc.'view_template.txt');
-                }
-                else
-                {
-                    echo $this->_ret.'Couldn\'t find View template.';
-                    return FALSE;
-                }
+                if($this->_get_template('view')===FALSE) return FALSE;
                 $this->_find_replace['{{VIEW}}'] = $file_name.'.php';
                 $f = strtr($f,$this->_find_replace);
                 if(strlen($directories)>0 && !file_exists(APPPATH.'views/'.$directories))
@@ -474,15 +450,7 @@ class Matches extends CI_Controller {
             }
             else
             {
-                if(file_exists($this->_templates_loc.'migration_template.txt'))
-                {
-                    $f = file_get_contents($this->_templates_loc.'migration_template.txt');
-                }
-                else
-                {
-                    echo $this->_ret.'Couldn\'t find Migration template.';
-                    return FALSE;
-                }
+                if($this->_get_template('migration')===FALSE) return FALSE;
                 $this->_find_replace['{{MIGRATION}}'] = $class_name;
                 $this->_find_replace['{{MIGRATION_FILE}}'] = $file_name;
                 $this->_find_replace['{{MIGRATION_PATH}}'] = $migration_path;
@@ -601,6 +569,20 @@ class Matches extends CI_Controller {
             $file_name = ucfirst($file_name);
         }
         return $file_name;
+    }
+
+    private function _get_template($type)
+    {
+        $template_loc = $this->_templates_loc.$type.'_template.txt';
+        if(file_exists($template_loc))
+        {
+            $f = file_get_contents($template_loc);
+        }
+        else
+        {
+            echo $this->_ret.'Couldn\'t find '.$type.' template.';
+            return FALSE;
+        }
     }
 
 
