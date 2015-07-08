@@ -65,7 +65,16 @@ php index.php matches create:controller admin.user extend=admin
 Creates a migration having name_of_migration prefixed with version as file name. If no name_of_table is given, will name the table as the name_of_migration.
 
 ###create:model name_of_model 
-Creates a model having name_of_model as name. You can put the model inside a directory. Directories are delimited with ".". So, if you want to create the model inside models/admin, you can do create model admin.name_of_model
+Creates a model having name_of_model as name. You can put the model inside a directory. Directories are delimited with ".". So, if you want to create the model inside models/admin, you can do create model admin.name_of_model. Below are more usage examples:
+
+Create a user_model model that extends MY_Model
+```php
+php index.php matches create:model user_model e=my
+```
+Create a User model inside admin directory that will extend MY_Model
+```php
+php index.php matches create:model admin.user extend=my
+```
 
 ###create:view name_of_view
 Creates a view having name_of_view as file name.. You can put the view inside a directory. Directories are delimited with ".". So, if you want to create the view inside views/admin, you can do create view admin.name_of_controller
