@@ -54,11 +54,11 @@ Creates a controller having name_of_controller as name. You can put the controll
 
 Create a Welcome controller that extends MY_Controller
 ```php
-php index.php matches create:controller welcome e:my
+php index.php matches create:controller welcome e:MY
 ```
 Create a User controller inside admin directory that will extend Admin_Controller
 ```php
-php index.php matches create:controller admin.user e:admin
+php index.php matches create:controller admin.user e:Admin
 ```
 
 ###create:migration name_of_migration
