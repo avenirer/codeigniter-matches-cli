@@ -221,11 +221,14 @@ class Matches extends CI_Controller {
             }
             else
             {
-                if($this->_get_template('controller')===FALSE) return FALSE;
+                $f = $this->_get_template('controller');
+                if($f === FALSE) return FALSE;
                 $this->_find_replace['{{CONTROLLER}}'] = $class_name;
                 $this->_find_replace['{{CONTROLLER_FILE}}'] = $file_name.'.php';
                 $this->_find_replace['{{MV}}'] = strtolower($class_name);
-                $this->_find_replace['{{C_EXTENDS}}'] = array_key_exists('extend',$arguments) ? strtoupper($arguments['extend']) : $this->_c_extends;
+                $extends = array_key_exists('extend',$arguments) ? $arguments['extend'] : $this->_c_extends;
+                $extends = in_array(strtolower($extends),array('my','ci')) ? strtoupper($extends) : ucfirst($extends);
+                $this->_find_replace['{{C_EXTENDS}}'] = $extends;
                 $f = strtr($f,$this->_find_replace);
                 if(strlen($directories)>0 && !file_exists(APPPATH.'controllers/'.$directories))
                 {
@@ -281,10 +284,14 @@ class Matches extends CI_Controller {
             }
             else
             {
-                if($this->_get_template('model')===FALSE) return FALSE;
+                if($f = $this->_get_template('model') === FALSE) return FALSE;
                 $this->_find_replace['{{MODEL}}'] = $class_name;
                 $this->_find_replace['{{MODEL_FILE}}'] = $file_name.'.php';
-                $this->_find_replace['{{MO_EXTENDS}}'] = $this->_mo_extends;
+                
+                $extends = array_key_exists('extend',$arguments) ? $arguments['extend'] : $this->_mo_extends;
+                $extends = in_array(strtolower($extends),array('my','ci')) ? strtoupper($extends) : ucfirst($extends);
+                
+                $this->_find_replace['{{MO_EXTENDS}}'] = $extends;
                 $f = strtr($f,$this->_find_replace);
                 if(strlen($directories)>0 && !file_exists(APPPATH.'models/'.$directories))
                 {
@@ -340,7 +347,7 @@ class Matches extends CI_Controller {
             }
             else
             {
-                if($this->_get_template('view')===FALSE) return FALSE;
+                if($f = $this->_get_template('view')===FALSE) return FALSE;
                 $this->_find_replace['{{VIEW}}'] = $file_name.'.php';
                 $f = strtr($f,$this->_find_replace);
                 if(strlen($directories)>0 && !file_exists(APPPATH.'views/'.$directories))
@@ -450,11 +457,15 @@ class Matches extends CI_Controller {
             }
             else
             {
-                if($this->_get_template('migration')===FALSE) return FALSE;
+                if($f = $this->_get_template('migration')===FALSE) return FALSE;
                 $this->_find_replace['{{MIGRATION}}'] = $class_name;
                 $this->_find_replace['{{MIGRATION_FILE}}'] = $file_name;
                 $this->_find_replace['{{MIGRATION_PATH}}'] = $migration_path;
-                $this->_find_replace['{{MI_EXTENDS}}'] = array_key_exists('extend',$arguments) ? strtoupper($arguments['extend']) : $this->_mi_extends;
+
+                $extends = array_key_exists('extend',$arguments) ? $arguments['extend'] : $this->_mi_extends;
+                $extends = in_array(strtolower($extends),array('my','ci')) ? strtoupper($extends) : ucfirst($extends);
+                
+                $this->_find_replace['{{MI_EXTENDS}}'] = $extends;
                 $table = 'SET_YOUR_TABLE_HERE';
                 if(array_key_exists('table',$arguments))
                 {
@@ -577,6 +588,7 @@ class Matches extends CI_Controller {
         if(file_exists($template_loc))
         {
             $f = file_get_contents($template_loc);
+            return $f;
         }
         else
         {
@@ -584,6 +596,4 @@ class Matches extends CI_Controller {
             return FALSE;
         }
     }
-
-
 }
