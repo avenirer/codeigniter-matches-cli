@@ -45,13 +45,23 @@ displays all commands available
 
 ##create:...
 
-###create:app name_of_app###
+###create:app name_of_app
 Creates a MVC stack (controller, model, view) having name_of_app as names.
 
 ###create:controller name_of_controller
-Creates a controller having name_of_controller as name. You can put the controller inside a directory. Directories are delimited with ".". So, if you want to create the controller inside controllers/admin, you can do create controller admin.name_of_controller
 
-###create:migration name_of_migration t:name_of_table(OPTIONAL)
+Creates a controller having name_of_controller as name. You can put the controller inside a directory. Directories are delimited with ".". So, if you want to create the controller inside controllers/admin, you can do create controller admin.name_of_controller. Below are more usage examples:
+
+Create a Welcome controller that extends MY_Controller
+```php
+php index.php matches create:controller welcome e:my
+```
+Create a User controller inside admin directory that will extend Admin_Controller
+```php
+php index.php matches create:controller admin.user e:admin
+```
+
+###create:migration name_of_migration
 Creates a migration having name_of_migration prefixed with version as file name. If no name_of_table is given, will name the table as the name_of_migration.
 
 ###create:model name_of_model 
