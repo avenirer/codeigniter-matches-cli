@@ -12,10 +12,18 @@ class {{MIGRATION}} extends {{MI_EXTENDS}}_Migration
 	}
 	public function up()
 	{
-		$this->dbforge->add_field("id int(11) unsigned NOT NULL AUTO_INCREMENT");
-        	$this->dbforge->add_key('id', TRUE);
-        	$this->dbforge->create_table('{{TABLE}}', TRUE);
-    	}
+	    $fields = array(
+            'id' => array(
+                'type'=>'INT',
+                'constraint'=>11,
+                'unsigned'=>TRUE,
+                'auto_increment' => TRUE
+            )
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table('{{TABLE}}', TRUE);
+    }
 	public function down()
 	{
         	$this->dbforge->drop_table('{{TABLE}}');
