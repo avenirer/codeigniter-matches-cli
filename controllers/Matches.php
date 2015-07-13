@@ -374,12 +374,20 @@ class Matches extends CI_Controller {
         }
     }
 
-    public function do_migration()
+    public function do_migration($version = NULL)
     {
         $this->load->library('migration');
-        if ($this->migration->current() === FALSE)
+        if(isset($version) && ($this->migration->version($version) === FALSE))
         {
             show_error($this->migration->error_string());
+        }
+        elseif(is_null($version) && $this->migration->latest() === FALSE)
+        {
+            show_error($this->migration->error_string());
+        }
+        else
+        {
+            echo $this->_ret.'The migration has concluded successfully.';
         }
     }
 
@@ -459,7 +467,8 @@ class Matches extends CI_Controller {
             }
             else
             {
-                if($f = $this->_get_template('migration')===FALSE) return FALSE;
+                $f = $this->_get_template('migration');
+                if($f === FALSE) return FALSE;
                 $this->_find_replace['{{MIGRATION}}'] = $class_name;
                 $this->_find_replace['{{MIGRATION_FILE}}'] = $file_name;
                 $this->_find_replace['{{MIGRATION_PATH}}'] = $migration_path;
