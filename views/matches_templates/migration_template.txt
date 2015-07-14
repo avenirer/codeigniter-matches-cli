@@ -19,8 +19,8 @@ class {{MIGRATION}} extends {{MI_EXTENDS}}_Migration
                 'unsigned'=>TRUE,
                 'auto_increment' => TRUE
             )
+        );
         $this->dbforge->add_field($fields);
-        $this->dbforge->add_key('id', TRUE);
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table('{{TABLE}}', TRUE);
     }
