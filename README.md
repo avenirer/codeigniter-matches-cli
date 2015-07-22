@@ -3,7 +3,7 @@ Codeigniter Matches CLI
 
 Codeigniter Matches is a PHP CLI script that allows you to write controllers, models and views faster.
 
-#Usage
+#Setup
 
 To verify if you have php cli installed, type into terminal/command prompt.
 ```php
@@ -30,51 +30,66 @@ php index.php matches
 
 If everything went well, you should be greeted by Matches.
 
-#Commands
+#Usage
 
-You can start using Matches by writing:
+##Application
+
+To create MVC stack (controller, model, view) you can use create:app.
+
+Usage example
 ```php
-php index.php matches [COMMAND]
+// Create an MVC stack
+php index.php matches create:app users
 ```
 
-...where [COMMAND] can be:
-
-##help
-
-displays all commands available
-
-##create:...
-
-###create:app name_of_app
-Creates a MVC stack (controller, model, view) having name_of_app as names.
+##Controllers
 
 ###create:controller name_of_controller
 
-Creates a controller having name_of_controller as name. You can put the controller inside a directory. Directories are delimited with ".". So, if you want to create the controller inside controllers/admin, you can do create controller admin.name_of_controller. Below are more usage examples:
+You can use Matches to create a Controller file. The command will need at leas a parameter which represents the name of the controller.
 
-Create a Welcome controller that extends MY_Controller
+You can put the controller inside a directory. Directories are delimited with ".". So, if you want to create the controller inside controllers/admin, you can do create:controller admin.name_of_controller.
+
+Usage examples
 ```php
+// Create a Welcome controller that extends MY_Controller
 php index.php matches create:controller welcome e=my
-```
-Create a User controller inside admin directory that will extend Admin_Controller
-```php
+
+//Create a User controller inside admin directory that will extend Admin_Controller
 php index.php matches create:controller admin.user extend=admin
 ```
 
-###create:model name_of_model 
-Creates a model having name_of_model as name. You can put the model inside a directory. Directories are delimited with ".". So, if you want to create the model inside models/admin, you can do create model admin.name_of_model. Below are more usage examples:
+##Models
 
-Create a user_model model that extends MY_Model
+###create:model name_of_model
+
+Creates a model having name_of_model as name. You can put the model inside a directory. Directories are delimited with ".". So, if you want to create the model inside models/admin, you can do create model admin.name_of_model.
+
+Usage examples
+
 ```php
+//Create a user_model model that extends MY_Model
 php index.php matches create:model user_model e=my
-```
-Create a User model inside admin directory that will extend MY_Model
-```php
+
+// Create a User model inside admin directory that will extend MY_Model
 php index.php matches create:model admin.user extend=my
 ```
 
+##Views
+
 ###create:view name_of_view
-Creates a view having name_of_view as file name.. You can put the view inside a directory. Directories are delimited with ".". So, if you want to create the view inside views/admin, you can do create view admin.name_of_controller
+
+Creates a view having name_of_view as file name. You can put the view inside a directory. Directories are delimited with ".". So, if you want to create the view inside views/admin, you can do create view admin.name_of_view.
+
+Usage examples
+
+```php
+//Create an index_view.php
+php index.php matches create:view user_view
+
+// Create an index_view.php inside users directory
+php index.php matches create:view users.index_view
+```
 
 ##Migrations
 
