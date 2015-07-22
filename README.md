@@ -61,18 +61,6 @@ Create a User controller inside admin directory that will extend Admin_Controlle
 php index.php matches create:controller admin.user extend=admin
 ```
 
-###create:migration name_of_migration
-Creates a migration having name_of_migration prefixed with version as file name. If no name_of_table is given, will name the table as the name_of_migration. Below are usage examples:
-
-Create a migration
-```php
-php index.php matches create:migration create_users_table
-```
-Create a migration with a table inside it
-```php
-php index.php matches create:migration create_users_table table=users
-```
-
 ###create:model name_of_model 
 Creates a model having name_of_model as name. You can put the model inside a directory. Directories are delimited with ".". So, if you want to create the model inside models/admin, you can do create model admin.name_of_model. Below are more usage examples:
 
@@ -87,6 +75,62 @@ php index.php matches create:model admin.user extend=my
 
 ###create:view name_of_view
 Creates a view having name_of_view as file name.. You can put the view inside a directory. Directories are delimited with ".". So, if you want to create the view inside views/admin, you can do create view admin.name_of_controller
+
+##Migrations
+
+CodeIgniter Matches helps you create, do, undo, and reset migrations.
+
+###create:migration
+
+To create a migration you can call create:migration. As a result, a migration will be created in the migrations directory prefixed with version as file name. You can also pass a table name as parameter. If no table name is given, you will have to put the name of the table in the migration file. Below are usage examples:
+
+Usage examples
+```php
+// Create a migration
+php index.php matches create:migration create_users_table
+
+//Create a migration with a table inside it
+php index.php matches create:migration create_users_table table=users
+
+//Create a migration with a table inside it
+php index.php matches create:migration create_users_table t=users
+```
+
+###do:migration
+
+do:migration executes the migrations' up() methods. If you pass the version of the migration a parameter, it will stop at that version of the migration.
+
+Usage examples:
+```php
+// Execute all migrations until the last one
+php index.php matches do:migration
+
+// Execute all migrations until a certain version of migration
+php index.php matches do:migration 20150722
+```
+
+###undo:migration
+
+undo:migration returns you to the previous migration version. This one also can accept a migration version as parameter to return to a migration.
+
+Usage examples:
+```php
+// Undo last migration
+php index.php matches undo:migration
+
+// Undo the migrations until a specified migration version
+php index.php matches undo:migration 20150722
+```
+
+###reset:migration
+
+reset:migration will reset the migrations until the migration mentioned in $config['migration_version'] (in the migration configuration file).
+
+Usage example:
+```php
+// Reset the migrations
+php index.php matches reset:migration
+```
 
 ##encryption_key
 
