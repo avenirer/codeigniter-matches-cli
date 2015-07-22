@@ -62,7 +62,16 @@ php index.php matches create:controller admin.user extend=admin
 ```
 
 ###create:migration name_of_migration
-Creates a migration having name_of_migration prefixed with version as file name. If no name_of_table is given, will name the table as the name_of_migration.
+Creates a migration having name_of_migration prefixed with version as file name. If no name_of_table is given, will name the table as the name_of_migration. Below are usage examples:
+
+Create a migration
+```php
+php index.php matches create:migration create_users_table
+```
+Create a migration with a table inside it
+```php
+php index.php matches create:migration create_users_table table=users
+```
 
 ###create:model name_of_model 
 Creates a model having name_of_model as name. You can put the model inside a directory. Directories are delimited with ".". So, if you want to create the model inside models/admin, you can do create model admin.name_of_model. Below are more usage examples:
