@@ -5,11 +5,12 @@
 
 class {{MIGRATION}} extends {{MI_EXTENDS}}_Migration
 {
-	public function __construct()
+    public function __construct()
 	{
-		parent::__construct();
+	    parent::__construct();
 		$this->load->dbforge();
 	}
+	
 	public function up()
 	{
 	    $fields = array(
@@ -24,10 +25,11 @@ class {{MIGRATION}} extends {{MI_EXTENDS}}_Migration
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table('{{TABLE}}', TRUE);
     }
+    
 	public function down()
 	{
-        	$this->dbforge->drop_table('{{TABLE}}');
-        }
+	    $this->dbforge->drop_table('{{TABLE}}', TRUE);
+    }
 }
 /* End of file '{{MIGRATION_FILE}}' */
 /* Location: ./{{MIGRATION_PATH}}{{MIGRATION_FILE}}.php */
