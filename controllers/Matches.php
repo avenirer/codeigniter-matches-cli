@@ -199,7 +199,7 @@ class Matches extends CI_Controller {
         $arguments = array();
         foreach($params as $parameter)
         {
-            $argument = explode('=',$parameter);
+            $argument = explode(':',$parameter);
             if(sizeof($argument)==1 && !isset($controller))
             {
                 $controller = $argument[0];
@@ -262,7 +262,7 @@ class Matches extends CI_Controller {
         $arguments = array();
         foreach($params as $parameter)
         {
-            $argument = explode('=',$parameter);
+            $argument = explode(':',$parameter);
             if(sizeof($argument)==1 && !isset($model))
             {
                 $model = $argument[0];
@@ -327,7 +327,7 @@ class Matches extends CI_Controller {
         $arguments = array();
         foreach($params as $parameter)
         {
-            $argument = explode('=',$parameter);
+            $argument = explode(':',$parameter);
             if(sizeof($argument)==1 && !isset($view))
             {
                 $view = $argument[0];
@@ -460,7 +460,7 @@ class Matches extends CI_Controller {
         $arguments = array();
         foreach($params as $parameter)
         {
-            $argument = explode('=',$parameter);
+            $argument = explode(':',$parameter);
             if(sizeof($argument)==1 && !isset($action))
             {
                 $action = $argument[0];
