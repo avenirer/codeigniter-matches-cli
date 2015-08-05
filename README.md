@@ -53,10 +53,10 @@ You can put the controller inside a directory. Directories are delimited with ".
 Usage examples
 ```php
 // Create a Welcome controller that extends MY_Controller
-php index.php matches create:controller welcome e=my
+php index.php matches create:controller welcome e:my
 
 //Create a User controller inside admin directory that will extend Admin_Controller
-php index.php matches create:controller admin.user extend=admin
+php index.php matches create:controller admin.user extend:admin
 ```
 
 ##Models
@@ -69,10 +69,10 @@ Usage examples
 
 ```php
 //Create a user_model model that extends MY_Model
-php index.php matches create:model user_model e=my
+php index.php matches create:model user_model e:my
 
 // Create a User model inside admin directory that will extend MY_Model
-php index.php matches create:model admin.user extend=my
+php index.php matches create:model admin.user extend:my
 ```
 
 ##Views
@@ -105,10 +105,10 @@ Usage examples
 php index.php matches create:migration create_users_table
 
 //Create a migration with a table inside it
-php index.php matches create:migration create_users_table table=users
+php index.php matches create:migration create_users_table table:users
 
 //Create a migration with a table inside it
-php index.php matches create:migration create_users_table t=users
+php index.php matches create:migration create_users_table t:users
 ```
 
 ###do:migration
