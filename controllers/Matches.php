@@ -340,7 +340,7 @@ class Matches extends CI_Controller {
         if(isset($view))
         {
             $names = $this->_names($view);
-            $file_name = $names['file'];
+            $file_name = strtolower($names['file']);
             $directories = $names['directories'];
             if(file_exists(APPPATH.'views/'.$file_name.'.php'))
             {
