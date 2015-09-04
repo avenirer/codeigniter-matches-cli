@@ -101,4 +101,4 @@ class {{CONTROLLER}} extends {{C_EXTENDS}}_Controller
 	}
 }
 /* End of file '{{CONTROLLER_FILE}}' */
-/* Location: ./application/controllers/{{CONTROLLER_FILE}}.php */
+/* Location: ./application/controllers/{{CONTROLLER_FILE}} */
