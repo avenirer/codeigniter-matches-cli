@@ -530,10 +530,19 @@ class Matches extends CI_Controller {
 
                 $this->_find_replace['{{MI_EXTENDS}}'] = $extends;
                 $table = 'SET_YOUR_TABLE_HERE';
+                
                 if(array_key_exists('table',$arguments))
                 {
-                    $table = $arguments['table'];
+                    if($arguments['table'] == '%inherit%')
+                    {
+                        $table = $action;
+                    }
+                    else
+                    {
+                        $table = $arguments['table'];
+                    }
                 }
+                
                 $this->_find_replace['{{TABLE}}'] = $table;
                 $f = strtr($f,$this->_find_replace);
                 if(write_file($migration_path.$file_name.'.php',$f))
