@@ -535,7 +535,7 @@ class Matches extends CI_Controller {
                 {
                     if($arguments['table'] == '%inherit%')
                     {
-                        $table = preg_replace('/rename.|remove.|modify.|delete.|add.|.table|.tbl/i', '', $action);
+                        $table = preg_replace('/rename.|remove.|modify.|delete.|add.|.table|.tbl/gi', '', $action);
                     }
                     else
                     {
