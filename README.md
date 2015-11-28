@@ -104,11 +104,15 @@ Usage examples
 // Create a migration
 php index.php matches create:migration create_users_table
 
-//Create a migration with a table inside it
+// Create a migration with a table inside it
 php index.php matches create:migration create_users_table table:users
 
-//Create a migration with a table inside it
+// Create a migration with a table inside it
 php index.php matches create:migration create_users_table t:users
+
+// Create a migration and name the table like the migration
+// -> The table name will be 'users' in this exmaple
+php index.php matches create:migration t:%inherit% create_users_table
 ```
 
 ###do:migration
