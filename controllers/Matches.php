@@ -177,9 +177,10 @@ class Matches extends CI_Controller {
             }
             else
             {
-                $this->create_controller($app);
-                $this->create_model($app);
-                $this->create_view($app);
+                $params = func_get_args();
+                $this->create_controller(...$params);
+                $this->create_model(...$params);
+                $this->create_view(...$params);
 
             }
         }
@@ -194,7 +195,7 @@ class Matches extends CI_Controller {
     */
     public function create_controller()
     {
-        $available = array('extend'=>'extend','e'=>'extend');
+        $available = array('extend'=>'extend','e'=>'extend', 'hmvc' => 'hmvc');
         $params = func_get_args();
         $arguments = array();
         foreach($params as $parameter)
@@ -203,7 +204,7 @@ class Matches extends CI_Controller {
             if(sizeof($argument)==1 && !isset($controller))
             {
                 $controller = $argument[0];
-            }
+            } 
             elseif(array_key_exists($argument[0],$available))
             {
                 $arguments[$available[$argument[0]]] = $argument[1];
@@ -215,7 +216,19 @@ class Matches extends CI_Controller {
             $class_name = $names['class'];
             $file_name = $names['file'];
             $directories = $names['directories'];
-            if(file_exists(APPPATH.'controllers/'.$file_name.'.php'))
+            
+            $hmvc = array_key_exists('hmvc',$arguments) ? ($arguments['hmvc'] == 1 ? true : false) : false;
+            $apppath = $hmvc ? APPPATH.'modules'.$file_name.'/' : APPPATH;
+            if($hmvc && !file_exists($apppath))
+            {
+                mkdir($apppath, 0777, true);
+            }
+            if($hmvc && !file_exists($apppath.'controllers/'))
+            {
+                mkdir($apppath.'controllers/', 0777, true);
+            }
+            
+            if(file_exists($apppath.'controllers/'.$file_name.'.php'))
             {
                 echo $this->_ret.$class_name.' Controller already exists in the application/controllers'.$directories.' directory.';
             }
@@ -230,13 +243,13 @@ class Matches extends CI_Controller {
                 $extends = in_array(strtolower($extends),array('my','ci')) ? strtoupper($extends) : ucfirst($extends);
                 $this->_find_replace['{{C_EXTENDS}}'] = $extends;
                 $f = strtr($f,$this->_find_replace);
-                if(strlen($directories)>0 && !file_exists(APPPATH.'controllers/'.$directories))
+                if(strlen($directories)>0 && !file_exists($apppath.'controllers/'.$directories))
                 {
-                    mkdir(APPPATH.'controllers/'.$directories, 0777, true);
+                    mkdir($apppath.'controllers/'.$directories, 0777, true);
                 }
-                if(write_file(APPPATH.'controllers/'.$file_name.'.php',$f))
+                if(write_file($apppath.'controllers/'.$file_name.'.php',$f))
                 {
-                    echo $this->_ret.'Controller '.$class_name.' has been created inside '.APPPATH.'controllers/'.$directories.'.';
+                    echo $this->_ret.'Controller '.$class_name.' has been created inside '.$apppath.'controllers/'.$directories.'.';
                     return TRUE;
                 }
                 else
@@ -257,7 +270,7 @@ class Matches extends CI_Controller {
     */
     public function create_model()
     {
-        $available = array('extend'=>'extend','e'=>'extend');
+        $available = array('extend'=>'extend','e'=>'extend', 'hmvc' => 'hmvc');
         $params = func_get_args();
         $arguments = array();
         foreach($params as $parameter)
@@ -278,7 +291,19 @@ class Matches extends CI_Controller {
             $class_name = $names['class'];
             $file_name = $names['file'];
             $directories = $names['directories'];
-            if(file_exists(APPPATH.'models/'.$file_name.'.php'))
+
+            $hmvc = array_key_exists('hmvc',$arguments) ? ($arguments['hmvc'] == 1 ? true : false) : false;
+            $apppath = $hmvc ? APPPATH.'modules'.$file_name.'/' : APPPATH;
+            if($hmvc && !file_exists($apppath))
+            {
+                mkdir($apppath, 0777, true);
+            }
+            if($hmvc && !file_exists($apppath.'models/'))
+            {
+                mkdir($apppath.'models/', 0777, true);
+            }
+
+            if(file_exists($apppath.'models/'.$file_name.'.php'))
             {
                 echo $this->_ret.$class_name.' Model already exists in the application/models'.$directories.' directory.';
             }
@@ -294,13 +319,13 @@ class Matches extends CI_Controller {
 
                 $this->_find_replace['{{MO_EXTENDS}}'] = $extends;
                 $f = strtr($f,$this->_find_replace);
-                if(strlen($directories)>0 && !file_exists(APPPATH.'models/'.$directories))
+                if(strlen($directories)>0 && !file_exists($apppath.'models/'.$directories))
                 {
-                    mkdir(APPPATH.'models/'.$directories, 0777, true);
+                    mkdir($apppath.'models/'.$directories, 0777, true);
                 }
-                if(write_file(APPPATH.'models/'.$file_name.'.php',$f))
+                if(write_file($apppath.'models/'.$file_name.'.php',$f))
                 {
-                    echo $this->_ret.'Model '.$class_name.' has been created inside '.APPPATH.'models/'.$directories.'.';
+                    echo $this->_ret.'Model '.$class_name.' has been created inside '.$apppath.'models/'.$directories.'.';
                     return TRUE;
                 }
                 else
@@ -322,7 +347,7 @@ class Matches extends CI_Controller {
     */
     public function create_view($view = NULL)
     {
-        $available = array();
+        $available = array('hmvc' => 'hmvc');
         $params = func_get_args();
         $arguments = array();
         foreach($params as $parameter)
@@ -342,7 +367,19 @@ class Matches extends CI_Controller {
             $names = $this->_names($view);
             $file_name = strtolower($names['file']);
             $directories = $names['directories'];
-            if(file_exists(APPPATH.'views/'.$file_name.'.php'))
+
+            $hmvc = array_key_exists('hmvc',$arguments) ? ($arguments['hmvc'] == 1 ? true : false) : false;
+            $apppath = $hmvc ? APPPATH.'modules'.$file_name.'/' : APPPATH;
+            if($hmvc && !file_exists($apppath))
+            {
+                mkdir($apppath, 0777, true);
+            }
+            if($hmvc && !file_exists($apppath.'views/'))
+            {
+                mkdir($apppath.'views/', 0777, true);
+            }
+
+            if(file_exists($apppath.'views/'.$file_name.'.php'))
             {
                 echo $this->_ret.$file_name.' View already exists in the application/views/'.$directories.' directory.';
             }
@@ -352,13 +389,13 @@ class Matches extends CI_Controller {
                 if($f === FALSE) return FALSE;
                 $this->_find_replace['{{VIEW}}'] = $file_name.'.php';
                 $f = strtr($f,$this->_find_replace);
-                if(strlen($directories)>0 && !file_exists(APPPATH.'views/'.$directories))
+                if(strlen($directories)>0 && !file_exists($apppath.'views/'.$directories))
                 {
-                    mkdir(APPPATH.'views/'.$directories, 0777, true);
+                    mkdir($apppath.'views/'.$directories, 0777, true);
                 }
-                if(write_file(APPPATH.'views/'.$file_name.'.php',$f))
+                if(write_file($apppath.'views/'.$file_name.'.php',$f))
                 {
-                    echo $this->_ret.'View '.$file_name.' has been created inside '.APPPATH.'views/'.$directories.'.';
+                    echo $this->_ret.'View '.$file_name.' has been created inside '.$apppath.'views/'.$directories.'.';
                     return TRUE;
                 }
                 else
