@@ -11,7 +11,7 @@ class {{CONTROLLER}} extends {{C_EXTENDS}}_Controller
 	{
 		$this->load->model('{{MV}}_model');
 		$data['content'] = $this->{{MV}}_model->get_all();
-		$this->load->view('{{MV}}_view', $data);
+		$this->load->view('{{MV}}', $data);
 	}
 		
 	public function get($id)
@@ -21,7 +21,7 @@ class {{CONTROLLER}} extends {{C_EXTENDS}}_Controller
 		{
 			$this->load->model('{{MV}}_model');
 			$data['content'] = $this->{{MV}}_model->get($id);
-			$this->load->view('{{MV}}_view', $data);
+			$this->load->view('{{MV}}', $data);
 		}
 		else
 		{
@@ -35,7 +35,7 @@ class {{CONTROLLER}} extends {{C_EXTENDS}}_Controller
 		if($this->form_validation->run()===FALSE)
 		{
 			$data['input_element'] = array('name'=>'element', 'id'=>'element', 'value'=>set_value('element'));
-			$this->load->view('{{MV}}_view', $data);
+			$this->load->view('{{MV}}', $data);
 		}
 		else
 		{
@@ -43,11 +43,11 @@ class {{CONTROLLER}} extends {{C_EXTENDS}}_Controller
 			$this->load->model('{{MV}}_model');
 			if($this->{{MV}}_model->add(array('field_name'=>$field)))
 			{
-				$this->load->view('{{MV}}_success_page_view');
+				$this->load->view('{{MV}}_success_page');
 			}
 			else
 			{
-				$this->load->view('{{MV}}_error_page_view');
+				$this->load->view('{{MV}}_error_page');
 			}
 		}
 	}
@@ -68,7 +68,7 @@ class {{CONTROLLER}} extends {{C_EXTENDS}}_Controller
 			}
 			$data['input_element'] = array('name'=>'element', 'id'=>'element', 'value'=>set_value('element'));
 			$data['hidden'] = array('id'=>set_value('id',$id));
-			$this->load->view('{{MV}}_view', $data);
+			$this->load->view('{{MV}}', $data);
 		}
 		else
 		{
@@ -77,11 +77,11 @@ class {{CONTROLLER}} extends {{C_EXTENDS}}_Controller
 			$this->load->model('{{MV}}_model');
 			if($this->{{MV}}_model->update(array('element'=>$element),array('id'=>$id)))
 			{
-				$this->load->view('{{MV}}_success_page_view', $data);
+				$this->load->view('{{MV}}_success_page', $data);
 			}
 			else
 			{
-				$this->load->view('{{MV}}_error_page_view');
+				$this->load->view('{{MV}}_error_page');
 			}
 		}
 	}
@@ -92,7 +92,7 @@ class {{CONTROLLER}} extends {{C_EXTENDS}}_Controller
 		{
 			$this->load->model('{{MV}}_model');
 			$data['content'] = $this->{{MV}}_model->delete();
-			$this->load->view('{{MV}}_view', $data);
+			$this->load->view('{{MV}}', $data);
 		}
 		else
 		{

@@ -303,7 +303,7 @@ class Matches extends CI_Controller {
                 mkdir($apppath.'models/', 0777, true);
             }
 
-            if(file_exists($apppath.'models/'.$file_name.'.php'))
+            if(file_exists($apppath.'models/'.$file_name.'_model.php'))
             {
                 echo $this->_ret.$class_name.' Model already exists in the application/models'.$directories.' directory.';
             }
@@ -312,7 +312,7 @@ class Matches extends CI_Controller {
                 $f = $this->_get_template('model');
                 if($f === FALSE) return FALSE;
                 $this->_find_replace['{{MODEL}}'] = $class_name;
-                $this->_find_replace['{{MODEL_FILE}}'] = $file_name.'.php';
+                $this->_find_replace['{{MODEL_FILE}}'] = $file_name.'_model.php';
 
                 $extends = array_key_exists('extend',$arguments) ? $arguments['extend'] : $this->_mo_extends;
                 $extends = in_array(strtolower($extends),array('my','ci')) ? strtoupper($extends) : ucfirst($extends);
@@ -323,7 +323,7 @@ class Matches extends CI_Controller {
                 {
                     mkdir($apppath.'models/'.$directories, 0777, true);
                 }
-                if(write_file($apppath.'models/'.$file_name.'.php',$f))
+                if(write_file($apppath.'models/'.$file_name.'_model.php',$f))
                 {
                     echo $this->_ret.'Model '.$class_name.' has been created inside '.$apppath.'models/'.$directories.'.';
                     return TRUE;
