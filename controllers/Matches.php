@@ -1,148 +1,240 @@
 <?php
 #!/usr/bin/php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
-* Copyright (C) 2014 @avenirer [avenir.ro@gmail.com]
-* Everyone is permitted to copy and distribute verbatim or modified copies of this license document, 
-* and changing it is allowed as long as the name is changed.
-* DON'T BE A DICK PUBLIC LICENSE TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
-*
-***** Do whatever you like with the original work, just don't be a dick.
-***** Being a dick includes - but is not limited to - the following instances:
-********* 1a. Outright copyright infringement - Don't just copy this and change the name.
-********* 1b. Selling the unmodified original with no work done what-so-ever, that's REALLY being a dick.
-********* 1c. Modifying the original work to contain hidden harmful content. That would make you a PROPER dick.
-***** If you become rich through modifications, related works/services, or supporting the original work, share the love. Only a dick would make loads off this work and not buy the original works creator(s) a pint.
-***** Code is provided with no warranty. 
-*********** Using somebody else's code and bitching when it goes wrong makes you a DONKEY dick. 
-*********** Fix the problem yourself. A non-dick would submit the fix back.
- * 
- * 
+ * Copyright (C) 2014 @avenirer [avenir.ro@gmail.com]
+ * Everyone is permitted to copy and distribute verbatim or modified copies of this license document,
+ * and changing it is allowed as long as the name is changed.
+ * DON'T BE A DICK PUBLIC LICENSE TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+ *
+ ***** Do whatever you like with the original work, just don't be a dick.
+ ***** Being a dick includes - but is not limited to - the following instances:
+ ********* 1a. Outright copyright infringement - Don't just copy this and change the name.
+ ********* 1b. Selling the unmodified original with no work done option-so-ever, that's REALLY being a dick.
+ ********* 1c. Modifying the original work to contain hidden harmful content. That would make you a PROPER dick.
+ ***** If you become rich through modifications, related works/services, or supporting the original work, share the love. Only a dick would make loads off this work and not buy the original works creator(s) a pint.
+ ***** Code is provided with no warranty.
+ *********** Using somebody else's code and bitching when it goes wrong makes you a DONKEY dick.
+ *********** Fix the problem yourself. A non-dick would submit the fix back.
+ *
+ *
  * filename: Matches.php
  * This project started from a great idea posted by @veedeoo [veedeoo@gmail.com] on http://www.daniweb.com/web-development/php/code/477847/codeigniter-cli-trainer-script-creates-simple-application
  * License info: http://www.dbad-license.org/
  */
 
 /* first we make sure this isn't called from a web browser */
-if ( PHP_SAPI !== 'cli' ) exit('No web access allowed');
+if (PHP_SAPI !== 'cli') {
+    exit('No web access allowed');
+}
+
 /* raise or eliminate limits we would otherwise put on http requests */
 set_time_limit(0);
 ini_set('memory_limit', '256M');
 
-/* here we go */
-class Matches extends CI_Controller {
-    private $_c_extends;
-    private $_mo_extends;
-    private $_mi_extends;
-    private $_templates_loc;
-    private $_tab = "\t";
-    private $_tab2 = "\t\t";
-    private $_tab3 = "\t\t\t";
+class Matches extends CI_Controller
+{
 
-    private $_ret = "\n";
-    private $_ret2 = "\n\n";
-    private $_rettab = "\n\t";
-    private $_tabret= "\t\n";
-    private $_find_replace = array();
+    /**
+     * file name of the file
+     *
+     * @var string
+     */
+    private $file_name;
+
+    /**
+     * get folder and file name
+     *
+     * @var
+     */
+    private $lockup;
+
+    /**
+     * migration file path
+     *
+     * @var string path
+     */
+    private $migration_path;
+
+    /**
+     * formatted migration file name
+     *
+     * @var string
+     */
+    private $class_name;
+
+    /**
+     * The controller the what gonna extends from
+     *
+     * @var string
+     */
+    private $controller_extends;
+
+    /**
+     * The model the what gonna extends from
+     *
+     * @var string
+     */
+    private $model_extends;
+
+    /**
+     * The migration the what gonna extends from
+     *
+     * @var string
+     */
+    private $migration_extends;
+
+    /**
+     * The template path location
+     *
+     * @var string
+     */
+    private $template_location;
+
+    /**
+     * The controller the what gonna extends from
+     *
+     * @var string
+     */
+    private $find_replace = array();
+
+    /**
+     * extend options
+     *
+     * @var array
+     */
+    private $available = array('extend' => 'extends', 'e' => 'extends', 'table' => 'table', 't' => 'table');
+
+    /**
+     * Cli arguments
+     *
+     * @var array
+     */
+    private $arguments = array();
+
+    /**
+     * the type of handling 'controller, model, views, migration';
+     *
+     * @var string
+     */
+    private $type;
+
+    /**
+     * the content of template place holder
+     *
+     * @var
+     */
+    private $template_data;
+
+
+    // CLI characters
+    const TAB = "\t";
+    const DOUBLE_TAB = "\t\t";
+    const TRIPLE_TAB = "\t\t\t";
+    const RETURN_LINE  = "\n";
+    const DOUBLE_RETURN = "\n\n";
+    const RETURN_WITH_TAB = "\n\t";
+    const TAB_WITH_RETURN = "\t\n";
+
+    // cLI output color constant
+    const BLACK = "\033[0;30m";
+    const GREEN = "\033[0;32m";
+    const LIGHT_GREEN = "\033[1;32m";
+    const RED = "\033[0;31m";
+    const LIGHT_RED = "\033[1;31m";
+    const WHITE = "\033[1;37m";
+    const BG_RED = "\033[41m";
+    const BG_GREEN = "\033[42m";
+
+    // boot up matches
     public function __construct()
     {
         parent::__construct();
 
-        $this->config->load('matches',TRUE);
-        $this->_templates_loc = APPPATH.$this->config->item('templates', 'matches');
-        $this->_c_extends = $this->config->item('c_extends', 'matches');
-        $this->_mo_extends = $this->config->item('mo_extends', 'matches');
-        $this->_mi_extends = $this->config->item('mi_extends', 'matches');
+        $this->config->load('matches', true);
 
-        if (ENVIRONMENT === 'production')
-        {
-            echo "\n";
-            echo "======== WARNING ========".$this->_ret;
-            echo "===== IN PRODUCTION =====".$this->_ret;
-            echo "=========================".$this->_ret;
+        $this->template_location = APPPATH . $this->config->item('templates', 'matches');
+
+        $this->controller_extends = $this->config->item('controller_extends', 'matches');
+        $this->model_extends = $this->config->item('model_extends', 'matches');
+        $this->migration_extends = $this->config->item('migration_extends', 'matches');
+
+        if (ENVIRONMENT === 'production') {
+            echo self::RETURN_LINE;
+            echo "======== WARNING ========" . self::RETURN_LINE;
+            echo "===== IN PRODUCTION =====" . self::RETURN_LINE;
+            echo "=========================" . self::RETURN_LINE;
             echo "Are you sure you want to work with CLI on a production app? (y/n)";
+
             $line = fgets(STDIN);
-            if(trim($line) != 'y')
-            {
-                echo "Aborting!".$this->_ret;
-                exit;
+
+            if (trim($line) != 'y') {
+                exit("Aborting!" . self::RETURN_LINE );
             }
-            echo "\n";
-            echo "Thank you, continuing...".$this->_ret2;
+
+            echo self::RETURN_LINE;
+            echo "Thank you, continuing..." . self::DOUBLE_RETURN;
         }
+
         $this->load->helper('file');
     }
 
-    public function _remap($method, $params=array())
+    /**
+     * remap cli argument to object method
+     *
+     * @param  string $method
+     * @param  array  $parameters
+     * @return Object|bool
+     */
+    public function _remap($method, $parameters = array())
     {
-        if(strpos($method,':'))
-        {
-            $method = str_replace(':','_',$method);
+        if (strpos($method, ':')) {
+            $method = str_replace(':', '_', $method);
         }
-        if(method_exists($this,$method))
-        {
-            return call_user_func_array(array($this,$method),$params);
+
+        if (method_exists($this, $method)) {
+            return call_user_func_array(array($this, $method), $parameters);
         }
-        // Some code here...
+
+        return false;
     }
 
-
-    /*
-    * return string
-    */
+    /**
+     * list the available commands
+     *
+     * @return object help method
+     */
     public function index()
     {
-        echo 'Hello. Need help to ignite somethin\'?'.$this->_ret;
+        echo self::GREEN . self::RETURN_LINE . 'Available commands:' . PHP_EOL;
+        echo self::WHITE . self::DOUBLE_RETURN . 'create';
+        echo self::WHITE . self::RETURN_LINE . 'app name_of_app';
+        echo self::WHITE . self::RETURN_LINE . 'controller name_of_controller';
+        echo self::WHITE . self::RETURN_LINE . 'migration name_of_migration name_of_table ' . self::LIGHT_GREEN . '(OPTIONAL)';
+        echo self::WHITE . self::RETURN_LINE . 'model name_of_model';
+        echo self::WHITE . self::RETURN_LINE . 'view name_of_view';
+        echo self::WHITE . self::DOUBLE_RETURN . 'encryption_key string_to_hash ' . self::LIGHT_GREEN . '(OPTIONAL)';
+        echo self::WHITE . self::DOUBLE_RETURN . self::DOUBLE_RETURN;
     }
 
     /*
-    * CLI tester
-    * returns string
-    */
-    public function hello($name)
-    {
-        echo 'Hello '. $name.$this->_ret;
-    }
+     * create application's controller file, model file, view file and migration file
+     */
+    public function create($option = NULL, $name = NULL) {
 
+        $option = filter_var($option, FILTER_SANITIZE_STRING);
+        $name   = filter_var($name, FILTER_SANITIZE_STRING);
 
-    /*
-    * list the available commands
-    *
-    */
-    public function help()
-    {
-        echo $this->_ret.'Available commands:';
-        echo $this->_ret2.' create';
-        echo $this->_ret.'  app name_of_app';
-        echo $this->_ret.'  controller name_of_controller';
-        echo $this->_ret.'  migration name_of_migration name_of_table-(OPTIONAL)';
-        echo $this->_ret.'  model name_of_model';
-        echo $this->_ret.'  view name_of_view';
-        echo $this->_ret2.' encryption_key string_to_hash-(OPTIONAL)';
-        echo $this->_ret2.$this->_ret2;
-    }
+        $options = array('app', 'controller', 'model', 'view', 'migration');
 
-
-
-    /*
-    * create application's controller file, model file, view file and migration file
-    */
-
-    public function create($what = NULL, $name = NULL)
-    {
-        $what = filter_var($what, FILTER_SANITIZE_STRING);
-        $name = filter_var($name, FILTER_SANITIZE_STRING);
-        $can_create = array('app','controller','model','view','migration');
-        if(in_array($what, $can_create))
-        {
-            if(empty($name))
-            {
-                echo  $this->_ret.'You didn\'t provide a name for '.$what;
+        if (in_array($option, $options)) {
+            if (empty($name)) {
+                echo self::RETURN_LINE . 'You didn\'t provide a name for ' . $option;
                 return FALSE;
             }
-            switch($what)
-            {
+
+            switch ($option):
                 case 'app':
                     $this->create_app($name);
                     break;
@@ -158,514 +250,580 @@ class Matches extends CI_Controller {
                 case 'migration':
                     $this->create_migration($name);
                     break;
-            }
-
-        }
-        else
-        {
-            echo  $this->_ret.'I can only create: app, controller, model, migration';
+            endswitch;
+        } else {
+            echo self::RETURN_LINE . 'I can only create: app, controller, model, migration';
         }
     }
 
-    public function create_app($app = NULL)
+    /**
+     * generate app "controller, model, view2
+     */
+    public function create_app($app = null)
     {
-        if(isset($app))
-        {
-            if(file_exists('application/controllers/'.$this->_filename($app).'.php') OR (class_exists(''.$app.'')) OR (class_exists(''.$app.'_model')))
-            {
-                echo $app.' Controller or Model already exists in the application/controllers directory.';
-            }
-            else
-            {
+        if (isset($app)) {
+            if (file_exists('application/controllers/' . $this->_filename($app) . '.php')
+                or (class_exists('' . $app . ''))
+                or (class_exists('' . $app . '_model'))) {
+                echo $app . ' Controller or Model already exists in the application/controllers directory.';
+            } else {
                 $this->create_controller($app);
                 $this->create_model($app);
                 $this->create_view($app);
-
             }
-        }
-        else
-        {
-            echo $this->_ret.'You need to provide a name for the app';
+        } else {
+            echo self::RETURN_LINE  . 'You need to provide a name for the app';
         }
     }
-    /*
-    * create controller
-    * returns boolean true
-    */
+
+    /**
+     * create controller.
+     *
+     * @return bool
+     */
     public function create_controller()
     {
-        $available = array('extend'=>'extend','e'=>'extend');
-        $params = func_get_args();
-        $arguments = array();
-        foreach($params as $parameter)
-        {
-            $argument = explode(':',$parameter);
-            if(sizeof($argument)==1 && !isset($controller))
-            {
-                $controller = $argument[0];
-            }
-            elseif(array_key_exists($argument[0],$available))
-            {
-                $arguments[$available[$argument[0]]] = $argument[1];
-            }
+        $this->type = 'controller';
+
+        $this->extractArguments(func_get_args());
+
+        $this->lockup = $this->lockup();
+
+        if ($this->fileExists()) {
+            $this->info("{$this->type} already exists!")->error();
         }
-        if(isset($controller))
-        {
-            $names = $this->_names($controller);
-            $class_name = $names['class'];
-            $file_name = $names['file'];
-            $directories = $names['directories'];
-            if(file_exists(APPPATH.'controllers/'.$file_name.'.php'))
-            {
-                echo $this->_ret.$class_name.' Controller already exists in the application/controllers'.$directories.' directory.';
-            }
-            else
-            {
-                $f = $this->_get_template('controller');
-                if($f === FALSE) return FALSE;
-                $this->_find_replace['{{CONTROLLER}}'] = $class_name;
-                $this->_find_replace['{{CONTROLLER_FILE}}'] = $file_name.'.php';
-                $this->_find_replace['{{MV}}'] = strtolower($class_name);
-                $extends = array_key_exists('extend',$arguments) ? $arguments['extend'] : $this->_c_extends;
-                $extends = in_array(strtolower($extends),array('my','ci')) ? strtoupper($extends) : ucfirst($extends);
-                $this->_find_replace['{{C_EXTENDS}}'] = $extends;
-                $f = strtr($f,$this->_find_replace);
-                if(strlen($directories)>0 && !file_exists(APPPATH.'controllers/'.$directories))
-                {
-                    mkdir(APPPATH.'controllers/'.$directories, 0777, true);
-                }
-                if(write_file(APPPATH.'controllers/'.$file_name.'.php',$f))
-                {
-                    echo $this->_ret.'Controller '.$class_name.' has been created inside '.APPPATH.'controllers/'.$directories.'.';
-                    return TRUE;
-                }
-                else
-                {
-                    echo $this->_ret.'Couldn\'t write Controller.';
-                    return FALSE;
-                }
-            }
-        }
-        else
-        {
-            echo $this->_ret.'You need to provide a name for the controller.';
+
+        if ($this->createFile()) {
+            return $this->info("{$this->type} created successfully.")->success();
+        } else {
+            $this->info("Couldn\'t write {$this->type}.")->error();
         }
     }
-    /*
-    * create model
-    * returns boolean true
-    */
+
+    /**
+     * create model
+     *
+     * @return bool
+     */
     public function create_model()
     {
-        $available = array('extend'=>'extend','e'=>'extend');
-        $params = func_get_args();
-        $arguments = array();
-        foreach($params as $parameter)
-        {
-            $argument = explode(':',$parameter);
-            if(sizeof($argument)==1 && !isset($model))
-            {
-                $model = $argument[0];
-            }
-            elseif(array_key_exists($argument[0],$available))
-            {
-                $arguments[$available[$argument[0]]] = $argument[1];
-            }
-        }
-        if(isset($model))
-        {
-            $names = $this->_names($model);
-            $class_name = $names['class'];
-            $file_name = $names['file'];
-            $directories = $names['directories'];
-            if(file_exists(APPPATH.'models/'.$file_name.'.php'))
-            {
-                echo $this->_ret.$class_name.' Model already exists in the application/models'.$directories.' directory.';
-            }
-            else
-            {
-                $f = $this->_get_template('model');
-                if($f === FALSE) return FALSE;
-                $this->_find_replace['{{MODEL}}'] = $class_name;
-                $this->_find_replace['{{MODEL_FILE}}'] = $file_name.'.php';
+        $this->type = 'model';
 
-                $extends = array_key_exists('extend',$arguments) ? $arguments['extend'] : $this->_mo_extends;
-                $extends = in_array(strtolower($extends),array('my','ci')) ? strtoupper($extends) : ucfirst($extends);
+        $this->extractArguments(func_get_args());
 
-                $this->_find_replace['{{MO_EXTENDS}}'] = $extends;
-                $f = strtr($f,$this->_find_replace);
-                if(strlen($directories)>0 && !file_exists(APPPATH.'models/'.$directories))
-                {
-                    mkdir(APPPATH.'models/'.$directories, 0777, true);
-                }
-                if(write_file(APPPATH.'models/'.$file_name.'.php',$f))
-                {
-                    echo $this->_ret.'Model '.$class_name.' has been created inside '.APPPATH.'models/'.$directories.'.';
-                    return TRUE;
-                }
-                else
-                {
-                    echo $this->_ret.'Couldn\'t write Model.';
-                    return FALSE;
-                }
-            }
+        $this->lockup = $this->lockup();
+
+        if ($this->fileExists()) {
+            return $this->info("{$this->type} already exists!")->error();
         }
-        else
-        {
-            echo $this->_ret.'You need to provide a name for the model.';
+
+        if ($this->createFile()) {
+            $this->info("{$this->type} created successfully.")->success();
+        } else {
+            return $this->info("Couldn\'t write {$this->type}.")->error();
         }
     }
 
     /*
-    * create view
-    * returns string
-    */
-    public function create_view($view = NULL)
+     * create view
+     *
+     * returns bool
+     */
+    public function create_view($view = null)
     {
-        $available = array();
-        $params = func_get_args();
-        $arguments = array();
-        foreach($params as $parameter)
-        {
-            $argument = explode(':',$parameter);
-            if(sizeof($argument)==1 && !isset($view))
-            {
-                $view = $argument[0];
-            }
-            elseif(array_key_exists($argument[0],$available))
-            {
-                $arguments[$available[$argument[0]]] = $argument[1];
-            }
+        $this->type = 'view';
+
+        $this->extractArguments(func_get_args());
+
+        $this->lockup = $this->lockup();
+
+        if ($this->fileExists()) {
+            return $this->info("{$this->type} already exists!")->error();
         }
-        if(isset($view))
-        {
-            $names = $this->_names($view);
-            $file_name = strtolower($names['file']);
-            $directories = $names['directories'];
-            if(file_exists(APPPATH.'views/'.$file_name.'.php'))
-            {
-                echo $this->_ret.$file_name.' View already exists in the application/views/'.$directories.' directory.';
-            }
-            else
-            {
-                $f = $this->_get_template('view');
-                if($f === FALSE) return FALSE;
-                $this->_find_replace['{{VIEW}}'] = $file_name.'.php';
-                $f = strtr($f,$this->_find_replace);
-                if(strlen($directories)>0 && !file_exists(APPPATH.'views/'.$directories))
-                {
-                    mkdir(APPPATH.'views/'.$directories, 0777, true);
-                }
-                if(write_file(APPPATH.'views/'.$file_name.'.php',$f))
-                {
-                    echo $this->_ret.'View '.$file_name.' has been created inside '.APPPATH.'views/'.$directories.'.';
-                    return TRUE;
-                }
-                else
-                {
-                    echo $this->_ret.'Couldn\'t write View.';
-                    return FALSE;
-                }
-            }
-        }
-        else
-        {
-            echo $this->_ret.'You need to provide a name for the view file.';
+
+        if ($this->createFile()) {
+            return $this->info("{$this->type} created successfully.")->success();
+        } else {
+            $this->info("Couldn\'t write {$this->type}.")->error();
         }
     }
 
-    public function do_migration($version = NULL)
+    /**
+     * create migration file
+     *
+     * @return bool
+     */
+    public function create_migration()
     {
-        $this->load->library('migration');
-        if(isset($version) && ($this->migration->version($version) === FALSE))
-        {
-            show_error($this->migration->error_string());
-        }
-        elseif(is_null($version) && $this->migration->latest() === FALSE)
-        {
-            show_error($this->migration->error_string());
-        }
-        else
-        {
-            echo $this->_ret.'The migration has concluded successfully.';
-        }
-        return TRUE;
+        $this->type = 'migration';
+
+        $this->extractArguments(func_get_args());
+
+        $this->config->load('migration', true);
+        $this->migration_path = $this->config->item('migration_path', 'migration');
+
+        $this->createMigrationDirectoryIfNotAlreadyExist();
+
+        $this->verify_migration_enabled();
+
+        $this->setMigrationFileNameByMigrationType();
+
+        return $this->createMigrationFile();
     }
 
-    public function undo_migration($version = NULL)
+    /**
+     * run migration by specific version or by latest one's
+     *
+     * @param  string $version
+     * @return bool
+     */
+    public function do_migration($version = null)
+    {
+        $this->load->library('migration', 'ci_migration');
+
+        if (isset($version) && ($this->migration->version($version) === false)) {
+            $this->info($this->migration->error_string())->error();
+        } elseif (is_null($version) && $this->migration->latest() === false) {
+            $this->info($this->migration->error_string())->error();
+        }
+
+        return $this->info('The migration has concluded successfully.')->success();
+    }
+
+    /**
+     * undo the migration by version or the latest one's
+     *
+     * @param  string $version
+     * @return bool
+     */
+    public function undo_migration($version = null)
     {
         $this->load->library('migration');
+
         $migrations = $this->migration->find_migrations();
         $migration_keys = array();
-        foreach($migrations as $key => $migration)
-        {
+
+        foreach ($migrations as $key => $migration) {
             $migration_keys[] = $key;
         }
-        if(isset($version) && array_key_exists($version,$migrations) && $this->migration->version($version))
-        {
-            echo $this->_ret.'The migration was reset to the version: '.$version;
-            return TRUE;
-        }
-        elseif(isset($version) && !array_key_exists($version,$migrations))
-        {
-            echo $this->_ret.'The migration with version number '.$version.' doesn\'t exist.';
-        }
-        else
-        {
-            $penultimate = (sizeof($migration_keys)==1) ? 0 : $migration_keys[sizeof($migration_keys) - 2];
 
-            if($this->migration->version($penultimate))
-            {
-                echo $this->_ret.'The migration has been rolled back successfully.';
-                return TRUE;
-            }
-            else
-            {
-                echo $this->_ret.'Couldn\'t roll back the migration.';
-                return FALSE;
+        if (isset($version) && array_key_exists($version, $migrations) && $this->migration->version($version)) {
+            return $this->info('The migration was reset to the version: ' . $version)->success();
+        } elseif (isset($version) && !array_key_exists($version, $migrations)) {
+            $this->info('The migration with version number ' . $version . ' doesn\'t exist.')->error();
+        } else {
+            $penultimate = (count($migration_keys) == 1) ? 0 : $migration_keys[count($migration_keys) - 2];
+
+            if ($this->migration->version($penultimate)) {
+                return $this->info('The migration has been rolled back successfully.')->success();
+            } else {
+                $this->info('Couldn\'t roll back the migration.')->error();
             }
         }
     }
 
+    /**
+     * reset the migrations until the migration mentioned
+     * in the migration config file
+     */
     public function reset_migration()
     {
         $this->load->library('migration');
-        if($this->migration->current()!== FALSE)
-        {
-            echo $this->_ret.'The migration was reset to the version set in the config file.';
-            return TRUE;
-        }
-        else
-        {
-            echo $this->_ret.'Couldn\'t reset migration.';
+
+        if ($this->migration->current() !== false) {
+                return $this->info('The migration was reset to the version set in the config file.')->success();
+        } else {
             show_error($this->migration->error_string());
-            return FALSE;
+
+            $this->info('The migration was reset to the version set in the config file.')->error();
         }
     }
 
-    public function verify_migration_enabled()
+    private function verify_migration_enabled()
     {
         $migration_enabled = $this->config->item('migration_enabled');
-        if($migration_enabled===FALSE)
-        {
-            echo $this->_ret.'Your app is not migration enabled. Enable it inside application/config/migration.php';
+
+        if ($migration_enabled === false) {
+            return $this->info('Your app is not migration enabled. Enable it inside application/config/migration.php')->error();
         }
-        return TRUE;
+
+        return true;
     }
 
-    public function create_migration()
+    /**
+     * generate migration key in config.php file
+     *
+     * @param  string $string
+     * @return bool
+     */
+    public function encryption_key($string = null)
     {
-        $available = array('extend'=>'extend','e'=>'extend','table'=>'table','t'=>'table');
-        $params = func_get_args();
-        $arguments = array();
-        foreach($params as $parameter)
-        {
-            $argument = explode(':',$parameter);
-            if(sizeof($argument)==1 && !isset($action))
-            {
-                $action = $argument[0];
-            }
-            elseif(array_key_exists($argument[0],$available))
-            {
-                $arguments[$available[$argument[0]]] = $argument[1];
+        if (is_null($string)) {
+            $string = microtime();
+        }
+
+        $key = hash('ripemd128', $string);
+        $files = $this->search_files(APPPATH . 'config/', 'config.php');
+
+        if (! empty($files)) {
+            $search = '$config[\'encryption_key\'] = \'\';';
+            $replace = '$config[\'encryption_key\'] = \'' . $key . '\';';
+
+            foreach ($files as $file) {
+                $file = trim($file);
+
+                // is weird, but it seems that the file cannot be found unless I do some trimming
+                $template = file_get_contents($file);
+
+                if (strpos($template, $search) !== false) {
+                    $template = str_replace($search, $replace, $template);
+
+                    if (! write_file($file, $template)) {
+                        $this->info('Couldn\'t write encryption key !')->error();
+                    }
+
+                    return $this->info("Encryption key {$key} added to {$file}")->success();
+                }
+
+                $this->info("Couldn\'t find encryption_key or encryption_key already exists in {$file}")->error();
             }
         }
-        if(isset($action))
-        {
-            $class_name = 'Migration_'.ucfirst($action);
-            $this->config->load('migration',TRUE);
-            $migration_path = $this->config->item('migration_path','migration');
-            if(!file_exists($migration_path))
-            {
-                if(mkdir($migration_path,0755))
-                {
-                    echo $this->_ret.'Folder migrations created.';
-                }
-                else
-                {
-                    echo $this->_ret.'Couldn\'t create folder migrations.';
-                    return FALSE;
-                }
+
+        $this->info("Couldn\'t find config.php")->error();
+    }
+
+    /**
+     * search migration files
+     *
+     * @param  string $path
+     * @param  string $file
+     * @return string
+     */
+    private function search_files($path, $file)
+    {
+        $dir = new RecursiveDirectoryIterator($path);
+        $ite = new RecursiveIteratorIterator($dir);
+
+        $files = array();
+
+        foreach ($ite as $oFile) {
+            if ($oFile->getFilename() == 'config.php') {
+                $found = str_replace('\\', '/', self::RETURN_LINE  . $oFile->getPath() . '/' . $file);
+                $files[] = $found;
             }
-            $this->verify_migration_enabled();
-            $migration_type = $this->config->item('migration_type','migration');
-            if(empty($migration_type))
-            {
+        }
+
+        return $files;
+    }
+
+    /**
+     * create migration directory if not already exist
+     *
+     * @return void
+     */
+    private function createMigrationDirectoryIfNotAlreadyExist()
+    {
+        if (! file_exists($this->migration_path)) {
+            if (mkdir($this->migration_path, 0755)) {
+                return $this->info('Folder migrations created.')->success();
+            }
+
+            $this->info("Couldn\'t create folder migrations.")->error();
+        }
+    }
+
+    /**
+     * set migration file name by what was set in migration config file
+     *
+     * @return string   migration file name (sequential, timestamp)
+     */
+    private function setMigrationFileNameByMigrationType()
+    {
+        $migration_type = $this->config->item('migration_type', 'migration');
+
+            if (empty($migration_type)) {
                 $migration_type = 'sequential';
             }
-            if($migration_type == 'timestamp')
-            {
-                $file_name = date('YmdHis').'_'.strtolower($action);
-            }
-            else
-            {
+
+            if ($migration_type == 'timestamp') {
+                $this->class_name = date('YmdHis') . '_' . strtolower($this->file_name);
+            } else {
                 $latest_migration = 0;
-                foreach (glob($migration_path.'*.php') as $migration)
-                {
+
+                foreach (glob($this->migration_path . '*.php') as $migration) {
                     $pattern = '/[0-9]{3}/';
-                    if(preg_match($pattern, $migration, $matches))
-                    {
+                    if (preg_match($pattern, $migration, $matches)) {
                         $migration_version = intval($matches[0]);
                         $latest_migration = ($migration_version > $latest_migration) ? $migration_version : $latest_migration;
                     }
                 }
-                $latest_migration = (string)++$latest_migration;
-                $file_name = str_pad($latest_migration, 3, '0', STR_PAD_LEFT).'_'.strtolower($action);
-            }
-            if(file_exists($migration_path.$file_name) OR (class_exists($class_name)))
-            {
-                echo $this->_ret.$class_name.' Migration already exists.';
-                return FALSE;
-            }
-            else
-            {
-                $f = $this->_get_template('migration');
-                if($f === FALSE) return FALSE;
-                $this->_find_replace['{{MIGRATION}}'] = $class_name;
-                $this->_find_replace['{{MIGRATION_FILE}}'] = $file_name;
-                $this->_find_replace['{{MIGRATION_PATH}}'] = $migration_path;
 
-                $extends = array_key_exists('extend',$arguments) ? $arguments['extend'] : $this->_mi_extends;
-                $extends = in_array(strtolower($extends),array('my','ci')) ? strtoupper($extends) : ucfirst($extends);
+                $latest_migration = (string) ++$latest_migration;
+                $this->class_name = str_pad($latest_migration, 3, '0', STR_PAD_LEFT) . '_' . strtolower($this->file_name);
+            }
+    }
 
-                $this->_find_replace['{{MI_EXTENDS}}'] = $extends;
-                $table = 'SET_YOUR_TABLE_HERE';
-                
-                if(array_key_exists('table',$arguments))
-                {
-                    if($arguments['table'] == '%inherit%' || $arguments['table'] == '%i%')
-                    {
-                        $table = preg_replace('/rename_|remove_|modify_|delete_|add_|create_|_table|_tbl/i', '', $action);
-                    }
-                    else
-                    {
-                        $table = $arguments['table'];
-                    }
-                }
-                
-                $this->_find_replace['{{TABLE}}'] = $table;
-                $f = strtr($f,$this->_find_replace);
-                if(write_file($migration_path.$file_name.'.php',$f))
-                {
-                    echo $this->_ret.'Migration '.$class_name.' has been created.';
-                    return TRUE;
-                }
-                else
-                {
-                    echo $this->_ret.'Couldn\'t write Migration.';
-                    return FALSE;
+    /**
+     * create migration file
+     *
+     * @return bool the migration file
+     */
+    private function createMigrationFile()
+    {
+        if (file_exists($this->migration_path . $this->class_name) or (class_exists($this->class_name))) {
+            return $this->info("{$this->class_name} Migration already exists.")->error();
+        } else {
+            $template_data = $this->get_template('migration');
+
+            if ($template_data === false) {
+                return false;
+            }
+
+            $extends = array_key_exists('extends', $this->arguments) ? $this->arguments['extends'] : $this->migration_extends;
+            $extends = in_array(strtolower($extends), array('my', 'ci')) ? strtoupper($extends) : ucfirst($extends);
+
+            $table = 'SET_YOUR_TABLE_HERE';
+
+            if (array_key_exists('table', $this->arguments)) {
+                if ($this->arguments['table'] == '%inherit%' || $this->arguments['table'] == '%i%') {
+                    $table = preg_replace('/rename_|remove_|modify_|delete_|add_|create_|_table|_tbl/i', '', $this->file_name);
+                } else {
+                    $table = $this->arguments['table'];
                 }
             }
-        }
-        else
-        {
-            echo $this->_ret.'You need to provide a name for the migration.';
+
+            $this->find_replace['{{MIGRATION_NAME}}'] = $this->file_name;
+            $this->find_replace['{{MIGRATION_EXTENDS_FROM}}'] = $extends;
+            $this->find_replace['{{MIGRATION_FILE}}'] = $this->class_name;
+            $this->find_replace['{{MIGRATION_PATH}}'] = str_replace('\\', '/', $this->migration_path);
+            $this->find_replace['{{TABLE_NAME}}'] = $table;
+
+            $template_data = strtr($template_data, $this->find_replace);
+
+            if (! write_file($this->migration_path . $this->class_name . '.php', $template_data)) {
+                $this->info('Couldn\'t write Migration.')->error();
+            } else {
+                return $this->info("{$this->class_name} has been created.")->success();
+            }
         }
     }
 
-    public function encryption_key($string = NULL)
+    /**
+     * extract cli arguments
+     *
+     * @param  array $parameters
+     * @return bool
+     */
+    private function extractArguments($parameters)
     {
-        if(is_null($string))
-        {
-            $string = microtime();
+        if (count($parameters) < 1) {
+            return $this->info('no file name provided !')->error();
         }
-        $key = hash('ripemd128', $string);
-        $files = $this->_search_files(APPPATH.'config/','config.php');
-        if(!empty($files))
-        {
-            $search = '$config[\'encryption_key\'] = \'\';';
-            $replace = '$config[\'encryption_key\'] = \''.$key.'\';';
-            foreach($files as $file)
-            {
-                $file = trim($file);
-                // is weird, but it seems that the file cannot be found unless I do some trimming
-                $f = file_get_contents($file);
-                if(strpos($f, $search)!==FALSE)
-                {
-                    $f = str_replace($search, $replace, $f);
-                    if(write_file($file,$f))
-                    {
-                        echo $this->_ret.'Encryption key '.$key.' added to '.$file.'.';
-                    }
-                    else
-                    {
-                        echo $this->_ret.'Couldn\'t write encryption key '.$key.' to '.$file.'.';
-                    }
-                }
-                else
-                {
-                    echo $this->_ret.'Couldn\t find encryption_key or encryption_key already exists in '.$file.'.';
-                }
+
+        foreach ($parameters as $parameter) {
+            $argument = explode(':', $parameter);
+
+            // Check if passing just file name without setting extends controller
+            // otherwise set the extended controller to the controller given
+            if (count($argument) == 1 && !isset($this->file_name)) {
+                $this->file_name = $argument[0];
+            } elseif (array_key_exists($argument[0], $this->available)) {
+                $this->arguments[$this->available[$argument[0]]] = $argument[1];
             }
-        }
-        else
-        {
-            echo $this->_ret.'Couldn\'t find config.php';
         }
     }
 
-    private function _search_files($path,$file)
+    /**
+     * lock up for the file given
+     *
+     * @return array
+     */
+    private function lockup()
     {
-        $dir = new RecursiveDirectoryIterator($path);
-        $ite = new RecursiveIteratorIterator($dir);
-        $files = array();
-        foreach($ite as $oFile)
-        {
-            if($oFile->getFilename()=='config.php')
-            {
-                $found = str_replace('\\', '/', $this->_ret.$oFile->getPath().'/'.$file);
-                $files[] = $found;
-            }
-        }
-        return $files;
-    }
+        $str = strtolower($this->file_name);
 
-    private function _names($str)
-    {
-        $str = strtolower($str);
-        if(strpos($str,'.'))
-        {
+        if (strpos($str, '.')) {
             $structure = explode('.', $str);
-            $class_name = array_pop($structure);
-        }
-        else
-        {
+            $this->class_name = array_pop($structure);
+        } else {
             $structure = array();
-            $class_name = $str;
+            $this->class_name = $str;
         }
-        $class_name = ucfirst($class_name);
-        $file_name = $class_name;
-        if (substr(CI_VERSION, 0, 1) != '2')
-        {
-            $file_name = ucfirst($file_name);
+
+        $this->class_name = ucfirst($this->class_name);
+
+        if (substr(CI_VERSION, 0, 1) != '2') {
+            $this->class_name = ucfirst($this->class_name);
         }
-        $directories = implode('/',$structure);
-        $file = $directories.'/'.$file_name;
-        return array('file'=>$file, 'class'=>$class_name,'directories'=>$directories);
+
+        $directories = implode('/', $structure);
+
+        $file_path = ((strlen($directories) > 1) ? $directories . DIRECTORY_SEPARATOR : '') . $this->class_name . '.php';
+
+        return array(
+            'file_path' => $file_path,
+            'class_name' => $this->class_name,
+            'directories' => $directories,
+        );
     }
 
+    /**
+     * format file name by codeigniter version
+     *
+     * @param string $str
+     * @return string
+     */
     private function _filename($str)
     {
-        $file_name = strtolower($str);
-        if (substr(CI_VERSION, 0, 1) != '2')
-        {
-            $file_name = ucfirst($file_name);
+        $this->class_name = strtolower($str);
+
+        if (substr(CI_VERSION, 0, 1) != '2') {
+            $this->class_name = ucfirst($this->class_name);
         }
-        return $file_name;
+
+        return $this->class_name;
     }
 
-    private function _get_template($type)
+    /**
+     *  check if the template placeholder is exists and get the content
+     *
+     * @return bool
+     */
+    private function get_template()
     {
-        $template_loc = $this->_templates_loc.$type.'_template.txt';
-        if(file_exists($template_loc))
-        {
-            $f = file_get_contents($template_loc);
-            return $f;
+        $template_location = $this->template_location . $this->type . '_template.txt';
+
+        if (file_exists($template_location)) {
+            $template = file_get_contents($template_location);
+            return $template;
         }
-        else
-        {
-            echo $this->_ret.'Couldn\'t find '.$type.' template.';
-            return FALSE;
-        }
+
+        return false;
     }
+
+    /**
+     * check if the file exists
+     *
+     * @return bool
+     */
+    private function fileExists()
+    {
+        return file_exists(APPPATH . $this->type . 's/' . $this->lockup['file_path']);
+    }
+
+    /**
+     * Create the file and save it
+     *
+     * @return bool
+     */
+    private function createFile()
+    {
+        $this->template_data = $this->get_template();
+
+        if ($this->template_data === false) {
+            $this->info("Couldn\'t find {$this->type} template.")->error();
+        }
+
+        if ($this->type == 'view') {
+           return $this->writeFile();
+        }
+
+        $this->formatTemplateFile();
+
+        return $this->writeFile();
+    }
+
+    /**
+     * Format template file
+     *
+     * @return string
+     */
+    private function formatTemplateFile()
+    {
+        $name = strtoupper($this->type);
+
+        // if the controller is extends not the default controller
+        // replace it with the given extended controller and the extends
+        $extends = array_key_exists('extends', $this->arguments) ? $this->arguments['extends'] : $this->{$this->type . '_extends'};
+
+        // controller is 'my' or 'ci' make them upper case or if other then that
+        // capitalize the first letter from word given
+        $extends = in_array(strtolower($extends), array('my', 'ci')) ? strtoupper($extends) : ucfirst($extends);
+
+        // Replace given data controller template
+        $this->find_replace["{{{$name}_NAME}}"] = $this->lockup['class_name'];
+        $this->find_replace["{{{$name}_FILE_PATH}}"] = str_replace('\\', '/', $this->lockup['file_path']);
+        $this->find_replace["{{{$name}_EXTENDS_FROM}}"] = $extends;
+
+        // replace all the placeholder with the information given
+        $this->template_data = strtr($this->template_data, $this->find_replace);
+
+    }
+
+    /**
+     * Create directories for the file
+     *
+     * @return bool
+     */
+    private function createDirectories()
+    {
+        if (strlen($this->lockup['directories']) > 0 && !file_exists(APPPATH . $this->type . 's/' . $this->lockup['directories'])) {
+            return mkdir(APPPATH . $this->type . 's/' . $this->lockup['directories'], 0777, true);
+        }
+
+        return true;
+    }
+
+    /**
+     * Write the file in proper path
+     *
+     * @return bool
+     */
+    private function writeFile()
+    {
+        if (! $this->createDirectories()) {
+            $this->info('Error creating directories')->error();
+        }
+
+        return write_file(APPPATH . $this->type .'s'. DIRECTORY_SEPARATOR . $this->lockup['file_path'], $this->template_data);
+    }
+
+    /**
+     * set the message
+     *
+     * @param string $message
+     * @return $this
+     */
+    private function info($message)
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    /**
+     * display success message
+     *
+     * @return string
+     */
+    private function success()
+    {
+        echo self::RETURN_LINE .
+            self::LIGHT_GREEN . $this->message;
+
+        return true;
+    }
+
+    /**
+     * display error message
+     *
+     * @return string
+     */
+    private function error()
+    {
+        exit(self::RETURN_LINE .
+             self::BG_RED .
+             self::WHITE . $this->message . self::RETURN_LINE);
+    }
+
 }
