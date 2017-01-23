@@ -287,6 +287,8 @@ class Matches extends CI_Controller
 
         $this->extractArguments(func_get_args());
 
+        $this->validateName();
+
         $this->lockup = $this->lockup();
 
         if ($this->fileExists()) {
@@ -310,6 +312,8 @@ class Matches extends CI_Controller
         $this->type = 'model';
 
         $this->extractArguments(func_get_args());
+
+        $this->validateName();
 
         $this->lockup = $this->lockup();
 
@@ -335,6 +339,8 @@ class Matches extends CI_Controller
 
         $this->extractArguments(func_get_args());
 
+        $this->validateName();
+
         $this->lockup = $this->lockup();
 
         if ($this->fileExists()) {
@@ -358,6 +364,8 @@ class Matches extends CI_Controller
         $this->type = 'migration';
 
         $this->extractArguments(func_get_args());
+
+        $this->validateName();
 
         $this->config->load('migration', true);
         $this->migration_path = $this->config->item('migration_path', 'migration');
@@ -431,7 +439,7 @@ class Matches extends CI_Controller
         $this->load->library('migration');
 
         if ($this->migration->current() !== false) {
-                return $this->info('The migration was reset to the version set in the config file.')->success();
+            return $this->info('The migration was reset to the version set in the config file.')->success();
         } else {
             show_error($this->migration->error_string());
 
@@ -541,26 +549,26 @@ class Matches extends CI_Controller
     {
         $migration_type = $this->config->item('migration_type', 'migration');
 
-            if (empty($migration_type)) {
-                $migration_type = 'sequential';
-            }
+        if (empty($migration_type)) {
+            $migration_type = 'sequential';
+        }
 
-            if ($migration_type == 'timestamp') {
-                $this->class_name = date('YmdHis') . '_' . strtolower($this->file_name);
-            } else {
-                $latest_migration = 0;
+        if ($migration_type == 'timestamp') {
+            $this->class_name = date('YmdHis') . '_' . strtolower($this->file_name);
+        } else {
+            $latest_migration = 0;
 
-                foreach (glob($this->migration_path . '*.php') as $migration) {
-                    $pattern = '/[0-9]{3}/';
-                    if (preg_match($pattern, $migration, $matches)) {
-                        $migration_version = intval($matches[0]);
-                        $latest_migration = ($migration_version > $latest_migration) ? $migration_version : $latest_migration;
-                    }
+            foreach (glob($this->migration_path . '*.php') as $migration) {
+                $pattern = '/[0-9]{3}/';
+                if (preg_match($pattern, $migration, $matches)) {
+                    $migration_version = intval($matches[0]);
+                    $latest_migration = ($migration_version > $latest_migration) ? $migration_version : $latest_migration;
                 }
-
-                $latest_migration = (string) ++$latest_migration;
-                $this->class_name = str_pad($latest_migration, 3, '0', STR_PAD_LEFT) . '_' . strtolower($this->file_name);
             }
+
+            $latest_migration = (string) ++$latest_migration;
+            $this->class_name = str_pad($latest_migration, 3, '0', STR_PAD_LEFT) . '_' . strtolower($this->file_name);
+        }
     }
 
     /**
@@ -725,7 +733,7 @@ class Matches extends CI_Controller
         }
 
         if ($this->type == 'view') {
-           return $this->writeFile();
+            return $this->writeFile();
         }
 
         $this->formatTemplateFile();
@@ -822,8 +830,18 @@ class Matches extends CI_Controller
     private function error()
     {
         exit(self::RETURN_LINE .
-             self::BG_RED .
-             self::WHITE . $this->message . self::RETURN_LINE);
+            self::BG_RED .
+            self::WHITE . $this->message . self::RETURN_LINE);
     }
 
+    /**
+     * validate file name if is contain number in the string
+     *
+     */
+    private function validateName()
+    {
+        if (! preg_match('/^([^0-9]+)$/', $this->file_name)) {
+            $this->info('The file name must not contain a number.')->error();
+        }
+    }
 }
