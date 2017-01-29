@@ -127,6 +127,12 @@ class Matches extends CI_Controller
      */
     private $template_data;
 
+    /**
+     * the displayed image for error or on success
+     *
+     * @var
+     */
+    private $message;
 
     // CLI characters
     const TAB = "\t";
@@ -170,11 +176,11 @@ class Matches extends CI_Controller
             $line = fgets(STDIN);
 
             if (trim($line) != 'y') {
-                exit("Aborting!" . self::RETURN_LINE );
+                $this->info('Aborting!')->error();
             }
 
-            echo self::RETURN_LINE;
-            echo "Thank you, continuing..." . self::DOUBLE_RETURN;
+            echo self::RETURN_LINE . "Thank you, continuing...";
+            echo self::DOUBLE_RETURN;
         }
 
         $this->load->helper('file');
@@ -207,15 +213,15 @@ class Matches extends CI_Controller
      */
     public function index()
     {
-        echo self::GREEN . self::RETURN_LINE . 'Available commands:' . PHP_EOL;
+        echo self::GREEN . self::RETURN_LINE . 'Available commands:';
         echo self::WHITE . self::DOUBLE_RETURN . 'create';
         echo self::WHITE . self::RETURN_LINE . 'app name_of_app';
         echo self::WHITE . self::RETURN_LINE . 'controller name_of_controller';
         echo self::WHITE . self::RETURN_LINE . 'migration name_of_migration name_of_table ' . self::LIGHT_GREEN . '(OPTIONAL)';
         echo self::WHITE . self::RETURN_LINE . 'model name_of_model';
         echo self::WHITE . self::RETURN_LINE . 'view name_of_view';
-        echo self::WHITE . self::DOUBLE_RETURN . 'encryption_key string_to_hash ' . self::LIGHT_GREEN . '(OPTIONAL)';
-        echo self::WHITE . self::DOUBLE_RETURN . self::DOUBLE_RETURN;
+        echo self::WHITE . self::RETURN_LINE . 'encryption_key string_to_hash ' . self::LIGHT_GREEN . '(OPTIONAL)';
+        echo self::DOUBLE_RETURN ;
     }
 
     /*
@@ -230,8 +236,7 @@ class Matches extends CI_Controller
 
         if (in_array($option, $options)) {
             if (empty($name)) {
-                echo self::RETURN_LINE . 'You didn\'t provide a name for ' . $option;
-                return FALSE;
+                $this->info('You didn\'t provide a name for ')->error();
             }
 
             switch ($option):
@@ -252,12 +257,14 @@ class Matches extends CI_Controller
                     break;
             endswitch;
         } else {
-            echo self::RETURN_LINE . 'I can only create: app, controller, model, migration';
+            $this->info('I can only create: app, controller, model, migration')->error();
         }
     }
 
     /**
-     * generate app "controller, model, view2
+     * generate app "controller, model, view"
+     *
+     * @param string $app
      */
     public function create_app($app = null)
     {
@@ -265,14 +272,14 @@ class Matches extends CI_Controller
             if (file_exists('application/controllers/' . $this->_filename($app) . '.php')
                 or (class_exists('' . $app . ''))
                 or (class_exists('' . $app . '_model'))) {
-                echo $app . ' Controller or Model already exists in the application/controllers directory.';
+                $this->info($app . ' Controller or Model already exists in the application/controllers directory.')->error();
             } else {
                 $this->create_controller($app);
                 $this->create_model($app);
                 $this->create_view($app);
             }
         } else {
-            echo self::RETURN_LINE  . 'You need to provide a name for the app';
+            $this->info('You need to provide a name for the app')->error();
         }
     }
 
