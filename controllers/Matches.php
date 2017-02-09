@@ -292,21 +292,15 @@ class Matches extends CI_Controller
     {
         $this->type = 'controller';
 
-        $this->extractArguments(func_get_args());
+	    $args = func_get_args();
 
-        $this->validateName();
+        $this->parseArguments($args);
 
-        $this->lockup = $this->lockup();
+        $this->buildFilePath();
 
-        if ($this->fileExists()) {
-            $this->info("{$this->type} already exists!")->error();
-        }
+        $this->formatTemplateFile();
 
-        if ($this->createFile()) {
-            return $this->info("{$this->type} created successfully.")->success();
-        } else {
-            $this->info("Couldn\'t write {$this->type}.")->error();
-        }
+        $this->saveFile();
     }
 
     /**
@@ -318,21 +312,15 @@ class Matches extends CI_Controller
     {
         $this->type = 'model';
 
-        $this->extractArguments(func_get_args());
+        $args = func_get_args();
 
-        $this->validateName();
+        $this->parseArguments($args);
 
-        $this->lockup = $this->lockup();
+        $this->buildFilePath();
 
-        if ($this->fileExists()) {
-            return $this->info("{$this->type} already exists!")->error();
-        }
+        $this->formatTemplateFile();
 
-        if ($this->createFile()) {
-            $this->info("{$this->type} created successfully.")->success();
-        } else {
-            return $this->info("Couldn\'t write {$this->type}.")->error();
-        }
+        $this->saveFile();
     }
 
     /*
@@ -344,21 +332,15 @@ class Matches extends CI_Controller
     {
         $this->type = 'view';
 
-        $this->extractArguments(func_get_args());
+        $args = func_get_args();
 
-        $this->validateName();
+        $this->parseArguments($args);
 
-        $this->lockup = $this->lockup();
+        $this->buildFilePath();
 
-        if ($this->fileExists()) {
-            return $this->info("{$this->type} already exists!")->error();
-        }
+        $this->getFileTemplate();
 
-        if ($this->createFile()) {
-            return $this->info("{$this->type} created successfully.")->success();
-        } else {
-            $this->info("Couldn\'t write {$this->type}.")->error();
-        }
+        $this->saveFile();
     }
 
     /**
@@ -370,9 +352,11 @@ class Matches extends CI_Controller
     {
         $this->type = 'migration';
 
-        $this->extractArguments(func_get_args());
+        $args = func_get_args();
 
-        $this->validateName();
+        $this->parseArguments($args);
+
+        $this->buildFilePath();
 
         $this->config->load('migration', true);
         $this->migration_path = $this->config->item('migration_path', 'migration');
@@ -588,7 +572,7 @@ class Matches extends CI_Controller
         if (file_exists($this->migration_path . $this->class_name) or (class_exists($this->class_name))) {
             return $this->info("{$this->class_name} Migration already exists.")->error();
         } else {
-            $template_data = $this->get_template('migration');
+            $template_data = $this->GetFileTemplate('migration');
 
             if ($template_data === false) {
                 return false;
@@ -629,13 +613,13 @@ class Matches extends CI_Controller
      * @param  array $parameters
      * @return bool
      */
-    private function extractArguments($parameters)
+    private function parseArguments($arguments)
     {
-        if (count($parameters) < 1) {
+        if (count($arguments) < 1) {
             return $this->info('no file name provided !')->error();
         }
 
-        foreach ($parameters as $parameter) {
+        foreach ($arguments as $parameter) {
             $argument = explode(':', $parameter);
 
             // Check if passing just file name without setting extends controller
@@ -646,6 +630,9 @@ class Matches extends CI_Controller
                 $this->arguments[$this->available[$argument[0]]] = $argument[1];
             }
         }
+
+
+        $this->validateName();
     }
 
     /**
@@ -653,7 +640,7 @@ class Matches extends CI_Controller
      *
      * @return array
      */
-    private function lockup()
+    private function buildFilePath()
     {
         $str = strtolower($this->file_name);
 
@@ -675,7 +662,7 @@ class Matches extends CI_Controller
 
         $file_path = ((strlen($directories) > 1) ? $directories . DIRECTORY_SEPARATOR : '') . $this->class_name . '.php';
 
-        return array(
+        return $this->lockup = array(
             'file_path' => $file_path,
             'class_name' => $this->class_name,
             'directories' => $directories,
@@ -704,16 +691,15 @@ class Matches extends CI_Controller
      *
      * @return bool
      */
-    private function get_template()
+    private function GetFileTemplate()
     {
         $template_location = $this->template_location . $this->type . '_template.txt';
 
         if (file_exists($template_location)) {
-            $template = file_get_contents($template_location);
-            return $template;
+            return $this->template_data = file_get_contents($template_location);
         }
 
-        return false;
+        $this->info("Couldn\'t find {$this->type} template.")->error();
     }
 
     /**
@@ -733,19 +719,9 @@ class Matches extends CI_Controller
      */
     private function createFile()
     {
-        $this->template_data = $this->get_template();
+        $this->GetFileTemplate();
 
-        if ($this->template_data === false) {
-            $this->info("Couldn\'t find {$this->type} template.")->error();
-        }
-
-        if ($this->type == 'view') {
-            return $this->writeFile();
-        }
-
-        $this->formatTemplateFile();
-
-        return $this->writeFile();
+        return $this->formatTemplateFile();
     }
 
     /**
@@ -755,6 +731,8 @@ class Matches extends CI_Controller
      */
     private function formatTemplateFile()
     {
+        $this->GetFileTemplate();
+
         $name = strtoupper($this->type);
 
         // if the controller is extends not the default controller
@@ -794,13 +772,21 @@ class Matches extends CI_Controller
      *
      * @return bool
      */
-    private function writeFile()
+    private function saveFile()
     {
+        if ($this->fileExists()) {
+            $this->info("{$this->type} already exists!")->error();
+        }
+
         if (! $this->createDirectories()) {
             $this->info('Error creating directories')->error();
         }
 
-        return write_file(APPPATH . $this->type .'s'. DIRECTORY_SEPARATOR . $this->lockup['file_path'], $this->template_data);
+        if (! write_file(APPPATH . $this->type .'s'. DIRECTORY_SEPARATOR . $this->lockup['file_path'], $this->template_data)) {
+            $this->info("Couldn\'t write {$this->type}.")->error();
+        }
+
+        return $this->info("{$this->type} created successfully.")->success();
     }
 
     /**
