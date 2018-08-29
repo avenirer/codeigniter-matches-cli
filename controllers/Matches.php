@@ -138,7 +138,7 @@ class Matches extends CI_Controller {
         {
             if(empty($name))
             {
-                echo  $this->_ret.'You didn\'t provide a name for '.$what;
+                echo  $this->_ret.'You didn\'t provide a name for '.$what.$this->_ret;
                 return FALSE;
             }
             switch($what)
@@ -163,7 +163,7 @@ class Matches extends CI_Controller {
         }
         else
         {
-            echo  $this->_ret.'I can only create: app, controller, model, migration';
+            echo  $this->_ret.'I can only create: app, controller, model, migration'.$this->_ret;
         }
     }
 
@@ -173,7 +173,7 @@ class Matches extends CI_Controller {
         {
             if(file_exists('application/controllers/'.$this->_filename($app).'.php') OR (class_exists(''.$app.'')) OR (class_exists(''.$app.'_model')))
             {
-                echo $app.' Controller or Model already exists in the application/controllers directory.';
+                echo $app.' Controller or Model already exists in the application/controllers directory.'.$this->_ret;
             }
             else
             {
@@ -185,7 +185,7 @@ class Matches extends CI_Controller {
         }
         else
         {
-            echo $this->_ret.'You need to provide a name for the app';
+            echo $this->_ret.'You need to provide a name for the app'.$this->_ret;
         }
     }
     /*
@@ -217,7 +217,7 @@ class Matches extends CI_Controller {
             $directories = $names['directories'];
             if(file_exists(APPPATH.'controllers/'.$file_name.'.php'))
             {
-                echo $this->_ret.$class_name.' Controller already exists in the application/controllers'.$directories.' directory.';
+                echo $this->_ret.$class_name.' Controller already exists in the application/controllers'.$directories.' directory.'.$this->_ret;
             }
             else
             {
@@ -236,19 +236,19 @@ class Matches extends CI_Controller {
                 }
                 if(write_file(APPPATH.'controllers/'.$file_name.'.php',$f))
                 {
-                    echo $this->_ret.'Controller '.$class_name.' has been created inside '.APPPATH.'controllers/'.$directories.'.';
+                    echo $this->_ret.'Controller '.$class_name.' has been created inside '.APPPATH.'controllers/'.$directories.'.'.$this->_ret;
                     return TRUE;
                 }
                 else
                 {
-                    echo $this->_ret.'Couldn\'t write Controller.';
+                    echo $this->_ret.'Couldn\'t write Controller.'.$this->_ret;
                     return FALSE;
                 }
             }
         }
         else
         {
-            echo $this->_ret.'You need to provide a name for the controller.';
+            echo $this->_ret.'You need to provide a name for the controller.'.$this->_ret;
         }
     }
     /*
@@ -280,7 +280,7 @@ class Matches extends CI_Controller {
             $directories = $names['directories'];
             if(file_exists(APPPATH.'models/'.$file_name.'.php'))
             {
-                echo $this->_ret.$class_name.' Model already exists in the application/models'.$directories.' directory.';
+                echo $this->_ret.$class_name.' Model already exists in the application/models'.$directories.' directory.'.$this->_ret;
             }
             else
             {
@@ -300,19 +300,19 @@ class Matches extends CI_Controller {
                 }
                 if(write_file(APPPATH.'models/'.$file_name.'.php',$f))
                 {
-                    echo $this->_ret.'Model '.$class_name.' has been created inside '.APPPATH.'models/'.$directories.'.';
+                    echo $this->_ret.'Model '.$class_name.' has been created inside '.APPPATH.'models/'.$directories.'.'.$this->_ret;
                     return TRUE;
                 }
                 else
                 {
-                    echo $this->_ret.'Couldn\'t write Model.';
+                    echo $this->_ret.'Couldn\'t write Model.'.$this->_ret;
                     return FALSE;
                 }
             }
         }
         else
         {
-            echo $this->_ret.'You need to provide a name for the model.';
+            echo $this->_ret.'You need to provide a name for the model.'.$this->_ret;
         }
     }
 
@@ -344,7 +344,7 @@ class Matches extends CI_Controller {
             $directories = $names['directories'];
             if(file_exists(APPPATH.'views/'.$file_name.'.php'))
             {
-                echo $this->_ret.$file_name.' View already exists in the application/views/'.$directories.' directory.';
+                echo $this->_ret.$file_name.' View already exists in the application/views/'.$directories.' directory.'.$this->_ret;
             }
             else
             {
@@ -358,7 +358,7 @@ class Matches extends CI_Controller {
                 }
                 if(write_file(APPPATH.'views/'.$file_name.'.php',$f))
                 {
-                    echo $this->_ret.'View '.$file_name.' has been created inside '.APPPATH.'views/'.$directories.'.';
+                    echo $this->_ret.'View '.$file_name.' has been created inside '.APPPATH.'views/'.$directories.'.'.$this->_ret;
                     return TRUE;
                 }
                 else
@@ -370,7 +370,7 @@ class Matches extends CI_Controller {
         }
         else
         {
-            echo $this->_ret.'You need to provide a name for the view file.';
+            echo $this->_ret.'You need to provide a name for the view file.'.$this->_ret;
         }
     }
 
@@ -387,7 +387,7 @@ class Matches extends CI_Controller {
         }
         else
         {
-            echo $this->_ret.'The migration has concluded successfully.';
+            echo $this->_ret.'The migration has concluded successfully.'.$this->_ret;
         }
         return TRUE;
     }
@@ -403,12 +403,12 @@ class Matches extends CI_Controller {
         }
         if(isset($version) && array_key_exists($version,$migrations) && $this->migration->version($version))
         {
-            echo $this->_ret.'The migration was reset to the version: '.$version;
+            echo $this->_ret.'The migration was reset to the version: '.$version.$this->_ret;
             return TRUE;
         }
         elseif(isset($version) && !array_key_exists($version,$migrations))
         {
-            echo $this->_ret.'The migration with version number '.$version.' doesn\'t exist.';
+            echo $this->_ret.'The migration with version number '.$version.' doesn\'t exist.'.$this->_ret;
         }
         else
         {
@@ -416,12 +416,12 @@ class Matches extends CI_Controller {
 
             if($this->migration->version($penultimate))
             {
-                echo $this->_ret.'The migration has been rolled back successfully.';
+                echo $this->_ret.'The migration has been rolled back successfully.'.$this->_ret;
                 return TRUE;
             }
             else
             {
-                echo $this->_ret.'Couldn\'t roll back the migration.';
+                echo $this->_ret.'Couldn\'t roll back the migration.'.$this->_ret;
                 return FALSE;
             }
         }
@@ -432,12 +432,12 @@ class Matches extends CI_Controller {
         $this->load->library('migration');
         if($this->migration->current()!== FALSE)
         {
-            echo $this->_ret.'The migration was reset to the version set in the config file.';
+            echo $this->_ret.'The migration was reset to the version set in the config file.'.$this->_ret;
             return TRUE;
         }
         else
         {
-            echo $this->_ret.'Couldn\'t reset migration.';
+            echo $this->_ret.'Couldn\'t reset migration.'.$this->_ret;
             show_error($this->migration->error_string());
             return FALSE;
         }
@@ -448,7 +448,7 @@ class Matches extends CI_Controller {
         $migration_enabled = $this->config->item('migration_enabled');
         if($migration_enabled===FALSE)
         {
-            echo $this->_ret.'Your app is not migration enabled. Enable it inside application/config/migration.php';
+            echo $this->_ret.'Your app is not migration enabled. Enable it inside application/config/migration.php'.$this->_ret;
         }
         return TRUE;
     }
@@ -479,11 +479,11 @@ class Matches extends CI_Controller {
             {
                 if(mkdir($migration_path,0755))
                 {
-                    echo $this->_ret.'Folder migrations created.';
+                    echo $this->_ret.'Folder migrations created.'.$this->_ret;
                 }
                 else
                 {
-                    echo $this->_ret.'Couldn\'t create folder migrations.';
+                    echo $this->_ret.'Couldn\'t create folder migrations.'.$this->_ret;
                     return FALSE;
                 }
             }
@@ -514,7 +514,7 @@ class Matches extends CI_Controller {
             }
             if(file_exists($migration_path.$file_name) OR (class_exists($class_name)))
             {
-                echo $this->_ret.$class_name.' Migration already exists.';
+                echo $this->_ret.$class_name.' Migration already exists.'.$this->_ret;
                 return FALSE;
             }
             else
@@ -547,19 +547,19 @@ class Matches extends CI_Controller {
                 $f = strtr($f,$this->_find_replace);
                 if(write_file($migration_path.$file_name.'.php',$f))
                 {
-                    echo $this->_ret.'Migration '.$class_name.' has been created.';
+                    echo $this->_ret.'Migration '.$class_name.' has been created.'.$this->_ret;
                     return TRUE;
                 }
                 else
                 {
-                    echo $this->_ret.'Couldn\'t write Migration.';
+                    echo $this->_ret.'Couldn\'t write Migration.'.$this->_ret;
                     return FALSE;
                 }
             }
         }
         else
         {
-            echo $this->_ret.'You need to provide a name for the migration.';
+            echo $this->_ret.'You need to provide a name for the migration.'.$this->_ret;
         }
     }
 
@@ -585,22 +585,22 @@ class Matches extends CI_Controller {
                     $f = str_replace($search, $replace, $f);
                     if(write_file($file,$f))
                     {
-                        echo $this->_ret.'Encryption key '.$key.' added to '.$file.'.';
+                        echo $this->_ret.'Encryption key '.$key.' added to '.$file.'.'.$this->_ret;
                     }
                     else
                     {
-                        echo $this->_ret.'Couldn\'t write encryption key '.$key.' to '.$file.'.';
+                        echo $this->_ret.'Couldn\'t write encryption key '.$key.' to '.$file.'.'.$this->_ret;
                     }
                 }
                 else
                 {
-                    echo $this->_ret.'Couldn\t find encryption_key or encryption_key already exists in '.$file.'.';
+                    echo $this->_ret.'Couldn\t find encryption_key or encryption_key already exists in '.$file.'.'.$this->_ret;
                 }
             }
         }
         else
         {
-            echo $this->_ret.'Couldn\'t find config.php';
+            echo $this->_ret.'Couldn\'t find config.php'.$this->_ret;
         }
     }
 
@@ -664,7 +664,7 @@ class Matches extends CI_Controller {
         }
         else
         {
-            echo $this->_ret.'Couldn\'t find '.$type.' template.';
+            echo $this->_ret.'Couldn\'t find '.$type.' template.'.$this->_ret;
             return FALSE;
         }
     }
